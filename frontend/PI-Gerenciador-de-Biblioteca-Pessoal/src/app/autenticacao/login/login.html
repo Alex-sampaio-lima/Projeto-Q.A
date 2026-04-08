@@ -1,0 +1,38 @@
+<div class="auth-container mb-2 mt-2">
+  <div class="auth-card glass-card">
+    <div class="auth-header text-center">
+      <h2>Bem-vindo de volta</h2>
+      <p class="text-muted">Acesse sua biblioteca pessoal</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label class="form-label" for="email">E-mail</label>
+        <input type="email" id="email" class="form-control" formControlName="email" placeholder="seu@email.com">
+        <div class="form-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          Insira um e-mail válido.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="senha">Senha</label>
+        <input type="password" id="senha" class="form-control" formControlName="senha" placeholder="••••••••">
+        <div class="form-error" *ngIf="loginForm.get('senha')?.touched && loginForm.get('senha')?.invalid">
+          A senha é obrigatória.
+        </div>
+      </div>
+
+      <div class="form-error mb-1 text-center" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">
+        Entrar
+      </button>
+    </form>
+
+    <div class="auth-footer text-center mt-1">
+      <p class="text-muted">Ainda não tem uma conta? <a routerLink="/registro">Cadastre-se</a></p>
+    </div>
+  </div>
+</div>

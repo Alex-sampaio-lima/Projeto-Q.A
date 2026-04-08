@@ -1,0 +1,81 @@
+<div class="container mt-2 mb-2 pb-2">
+  <div class="dashboard-header mb-2 form-header">
+    <div class="d-flex align-items-center gap-1">
+      <a routerLink="/livros" class="btn btn-secondary btn-back">← Voltar</a>
+      <h2>{{ isEditMode ? 'Editar Livro' : 'Adicionar Novo Livro' }}</h2>
+    </div>
+  </div>
+
+  <div class="form-container glass-card">
+    <form [formGroup]="livroForm" (ngSubmit)="onSubmit()" class="livro-form">
+      
+      <div class="form-row">
+        <div class="form-group col-md-8">
+          <label class="form-label">Título do Livro *</label>
+          <input type="text" class="form-control" formControlName="titulo" placeholder="Ex: O Senhor dos Anéis">
+          <div class="form-error" *ngIf="livroForm.get('titulo')?.touched && livroForm.get('titulo')?.invalid">
+            O título é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group col-md-4">
+          <label class="form-label">Ano de Publicação</label>
+          <input type="number" class="form-control" formControlName="ano" placeholder="Ex: 1954">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label class="form-label">Autor *</label>
+          <input type="text" class="form-control" formControlName="autor" placeholder="Ex: J.R.R. Tolkien">
+          <div class="form-error" *ngIf="livroForm.get('autor')?.touched && livroForm.get('autor')?.invalid">
+            O autor é obrigatório.
+          </div>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label class="form-label">Gênero *</label>
+          <input type="text" class="form-control" formControlName="genero" placeholder="Ex: Fantasia">
+          <div class="form-error" *ngIf="livroForm.get('genero')?.touched && livroForm.get('genero')?.invalid">
+            O gênero é obrigatório.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL da Capa do Livro</label>
+        <input type="url" class="form-control" formControlName="capaUrl" placeholder="https://exemplo.com/capa.jpg">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label class="form-label">Status de Leitura *</label>
+          <select class="form-control" formControlName="status">
+            <option value="Não Lido">Não Lido</option>
+            <option value="Lido">Lido</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label class="form-label">Sua Nota (1 a 5)</label>
+          <input type="number" class="form-control" formControlName="nota" min="1" max="5" placeholder="Sua nota de 1 a 5">
+          <div class="form-error" *ngIf="livroForm.get('nota')?.touched && livroForm.get('nota')?.invalid">
+            A nota deve ser entre 1 e 5.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Resumo / Sua Resenha</label>
+        <textarea class="form-control" formControlName="resumo" rows="4" placeholder="O que você achou do livro..."></textarea>
+      </div>
+
+      <div class="form-actions mt-2">
+        <button type="submit" class="btn btn-primary" [disabled]="livroForm.invalid">
+          {{ isEditMode ? 'Salvar Alterações' : 'Adicionar ao Acervo' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

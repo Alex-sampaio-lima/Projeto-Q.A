@@ -1,0 +1,54 @@
+<div class="auth-container mb-2 mt-2">
+  <div class="auth-card glass-card">
+    <div class="auth-header text-center">
+      <h2>Crie sua conta</h2>
+      <p class="text-muted">Comece a gerenciar sua biblioteca hoje</p>
+    </div>
+
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label class="form-label" for="nome">Nome Completo</label>
+        <input type="text" id="nome" class="form-control" formControlName="nome" placeholder="Seu nome">
+        <div class="form-error" *ngIf="registroForm.get('nome')?.touched && registroForm.get('nome')?.invalid">
+          O nome deve ter no mínimo 3 caracteres.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">E-mail</label>
+        <input type="email" id="email" class="form-control" formControlName="email" placeholder="seu@email.com">
+        <div class="form-error" *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.invalid">
+          Insira um e-mail válido.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="senha">Senha</label>
+        <input type="password" id="senha" class="form-control" formControlName="senha" placeholder="••••••••">
+        <div class="form-error" *ngIf="registroForm.get('senha')?.touched && registroForm.get('senha')?.invalid">
+          A senha deve ter no mínimo 6 caracteres.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmarSenha">Confirmar Senha</label>
+        <input type="password" id="confirmarSenha" class="form-control" formControlName="confirmarSenha" placeholder="••••••••">
+        <div class="form-error" *ngIf="registroForm.get('confirmarSenha')?.touched && registroForm.hasError('mismatch')">
+          As senhas não coincidem.
+        </div>
+      </div>
+
+      <div class="form-error mb-1 text-center" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="registroForm.invalid">
+        Cadastrar
+      </button>
+    </form>
+
+    <div class="auth-footer text-center mt-1">
+      <p class="text-muted">Já tem uma conta? <a routerLink="/login">Faça Login</a></p>
+    </div>
+  </div>
+</div>

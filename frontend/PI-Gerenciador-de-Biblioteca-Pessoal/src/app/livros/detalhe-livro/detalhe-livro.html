@@ -1,0 +1,52 @@
+<div class="container mt-2 mb-2 pb-2" *ngIf="livro">
+  <div class="dashboard-header mb-2 form-header">
+    <div class="d-flex align-items-center gap-1">
+      <a routerLink="/livros" class="btn btn-secondary btn-back">← Voltar à Lista</a>
+    </div>
+    <div class="detalhe-actions">
+      <a [routerLink]="['/livros/editar', livro.id]" class="btn btn-primary">Editar Livro</a>
+      <button class="btn btn-danger" (click)="deletar()">Excluir</button>
+    </div>
+  </div>
+
+  <div class="detalhe-container glass-card">
+    <div class="detalhe-capa-wrapper">
+      <img [src]="livro.capaUrl || 'https://via.placeholder.com/300x450/1f2334/8b92a5?text=Sem+Capa'"
+        [alt]="livro.titulo" class="detalhe-capa">
+      <div class="detalhe-status" [class.status-lido]="livro.status === 'Lido'">
+        {{ livro.status }}
+      </div>
+    </div>
+
+    <div class="detalhe-info">
+      <h1 class="detalhe-titulo">{{ livro.titulo }}</h1>
+      <h3 class="detalhe-autor">por {{ livro.autor }}</h3>
+
+      <div class="detalhe-meta">
+        <div class="meta-item">
+          <span class="meta-label">Gênero</span>
+          <span class="meta-value badge">{{ livro.genero }}</span>
+        </div>
+
+        <div class="meta-item" *ngIf="livro.ano">
+          <span class="meta-label">Ano</span>
+          <span class="meta-value">{{ livro.ano }}</span>
+        </div>
+      </div>
+
+      <div class="detalhe-rating mt-1" *ngIf="livro.nota">
+        <span class="meta-label">Sua Avaliação:</span>
+        <div class="stars">
+          <span class="star" *ngFor="let star of getEstrelas(livro.nota)">★</span>
+        </div>
+      </div>
+
+      <div class="detalhe-resumo mt-2">
+        <h4 class="mb-1">Resumo / Sua Resenha</h4>
+        <div class="resumo-texto">
+          {{ livro.resumo || 'Nenhuma resenha inserida para este livro.' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

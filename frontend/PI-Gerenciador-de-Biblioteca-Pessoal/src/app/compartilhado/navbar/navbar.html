@@ -1,0 +1,27 @@
+<nav class="navbar glass-card">
+  <div class="navbar-container container">
+    <a routerLink="/" class="navbar-logo">
+      <div class="logo-icon"></div>
+      <span>PI-<span class="text-primary">Biblioteca</span></span>
+    </a>
+    
+    <div class="navbar-menu">
+      <ng-container *ngIf="currentUser$ | async as user; else loggedOut">
+        <!-- Logged in state -->
+        <a routerLink="/livros" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Dashboard</a>
+        <a routerLink="/livros/novo" routerLinkActive="active" class="nav-link">Adicionar Livro</a>
+        <div class="user-profile">
+          <div class="avatar">{{ user.nome.charAt(0).toUpperCase() }}</div>
+          <span class="user-name">Olá, {{ user.nome.split(' ')[0] }}</span>
+          <button class="btn btn-secondary btn-sm ms-3" (click)="logout()">Sair</button>
+        </div>
+      </ng-container>
+      
+      <ng-template #loggedOut>
+        <!-- Logged out state -->
+        <a routerLink="/login" routerLinkActive="active" class="nav-link">Login</a>
+        <a routerLink="/registro" class="btn btn-primary">Começar</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>
