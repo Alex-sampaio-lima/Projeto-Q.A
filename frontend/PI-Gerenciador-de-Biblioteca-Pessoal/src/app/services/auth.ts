@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   private usersKey = 'biblioteca_users';
   private currentUserKey = 'biblioteca_currentUser';
-  
+
   private currentUserSubject: BehaviorSubject<Usuario | null>;
   public currentUser$: Observable<Usuario | null>;
 
@@ -17,10 +17,10 @@ export class AuthService {
     const storedUser = localStorage.getItem(this.currentUserKey);
     this.currentUserSubject = new BehaviorSubject<Usuario | null>(storedUser ? JSON.parse(storedUser) : null);
     this.currentUser$ = this.currentUserSubject.asObservable();
-    
+
     // Iniciar dados vazios se não existir
     if (!localStorage.getItem(this.usersKey)) {
-        localStorage.setItem(this.usersKey, JSON.stringify([]));
+      localStorage.setItem(this.usersKey, JSON.stringify([]));
     }
   }
 
@@ -30,7 +30,7 @@ export class AuthService {
 
   registrar(usuarioData: Partial<Usuario>): boolean {
     const usuarios: Usuario[] = JSON.parse(localStorage.getItem(this.usersKey) || '[]');
-    
+
     if (usuarios.find(u => u.email === usuarioData.email)) {
       return false; // Email em uso
     }
