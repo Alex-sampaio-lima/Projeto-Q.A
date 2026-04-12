@@ -1,12 +1,9 @@
 package com.senac.projeto_qa.Service;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.senac.projeto_qa.Repository.LivroRepository;
 import com.senac.projeto_qa.entities.Livro;
 
