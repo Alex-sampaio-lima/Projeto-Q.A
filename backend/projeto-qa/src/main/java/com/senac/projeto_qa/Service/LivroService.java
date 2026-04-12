@@ -33,5 +33,15 @@ public class LivroService {
     public void deleteById(String id) {
         livroRepository.deleteById(id);
     };
+
+    public Livro updateStatus(String id, String status) {
+        Optional<Livro> livroOpt = livroRepository.findById(id);
+        if (livroOpt.isPresent()) {
+            Livro livro = livroOpt.get();
+            livro.setStatus(status);
+            return livroRepository.save(livro);
+        }
+        return null;
+    };
     
 };
