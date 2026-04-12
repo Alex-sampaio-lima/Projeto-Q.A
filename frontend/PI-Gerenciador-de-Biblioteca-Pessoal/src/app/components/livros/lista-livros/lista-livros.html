@@ -10,29 +10,31 @@
   </div>
 
   <ng-container *ngIf="livros$ | async as livros">
-    
+
     <div class="books-grid" *ngIf="livros.length > 0; else emptyState">
       <div class="book-card glass-card" *ngFor="let livro of livros" [routerLink]="['/livros/detalhe', livro.id]">
         <div class="book-cover-wrapper">
-          <img [src]="livro.capaUrl || 'https://via.placeholder.com/300x450/1f2334/8b92a5?text=Sem+Capa'" [alt]="livro.titulo" class="book-cover">
+          <img [src]="livro.capaUrl || 'https://via.placeholder.com/300x450/1f2334/8b92a5?text=Sem+Capa'"
+            [alt]="livro.titulo" class="book-cover">
           <div class="book-status" [class.status-lido]="livro.status === 'Lido'">
             {{ livro.status }}
           </div>
         </div>
-        
+
         <div class="book-info">
           <h3 class="book-title">{{ livro.titulo }}</h3>
           <p class="book-author">{{ livro.autor }}</p>
-          
+
           <div class="book-meta">
             <span class="book-genre">{{ livro.genero }}</span>
             <div class="book-rating" *ngIf="livro.nota">
               <span class="star" *ngFor="let star of getEstrelas(livro.nota)">★</span>
             </div>
           </div>
-          
+
           <div class="book-actions">
-            <a [routerLink]="['/livros/editar', livro.id]" class="btn-icon" title="Editar" (click)="$event.stopPropagation()">
+            <a [routerLink]="['/livros/editar', livro.id]" class="btn-icon" title="Editar"
+              (click)="$event.stopPropagation()">
               ✎
             </a>
             <button class="btn-icon btn-icon-danger" title="Excluir" (click)="deletar(livro.id, $event)">

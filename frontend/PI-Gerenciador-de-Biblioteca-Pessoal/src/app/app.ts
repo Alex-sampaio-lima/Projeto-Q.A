@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Navbar } from './compartilhado/navbar/navbar';
-import { Rodape } from './compartilhado/rodape/rodape';
+import { Navbar } from './components/compartilhado/navbar/navbar';
+import { Rodape } from './components/compartilhado/rodape/rodape';
 
 @Component({
   selector: 'app-root',

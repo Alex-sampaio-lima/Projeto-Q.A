@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-registro',
@@ -44,10 +44,10 @@ export class RegistroComponent implements OnInit {
     if (this.registroForm.invalid) {
       return;
     }
-    
+
     const { nome, email, senha } = this.registroForm.value;
     const success = this.authService.registrar({ nome, email, senha });
-    
+
     if (success) {
       // Auto-login after registration
       this.authService.login(email, senha);

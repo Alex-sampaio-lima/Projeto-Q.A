@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { LivroService } from '../../services/livro';
-import { Livro } from '../../models/livro.model';
+import { LivroService } from '../../../services/livro';
+import { Livro } from '../../../models/livro.model';
 
 @Component({
   selector: 'app-formulario-livro',
@@ -50,10 +50,7 @@ export class FormularioLivroComponent implements OnInit {
       }
     });
 
-    if (this.livroForm.get('status')?.value === 'Não Lido') {
-         this.livroForm.get('nota')?.disable();
-    }
-
+    // Validations dinâmicas: Se está lido, pode ter nota
     this.livroForm.get('status')?.valueChanges.subscribe(status => {
       const notaControl = this.livroForm.get('nota');
       if (status === 'Não Lido') {
@@ -72,10 +69,11 @@ export class FormularioLivroComponent implements OnInit {
     const livro: Livro = {
       ...formValue,
       id: this.isEditMode ? this.editingId! : '',
-      usuarioId: '' 
+      usuarioId: '' // o service vai pegar do usuario atual
     };
 
     if (this.isEditMode) {
+      // precisa preservar informações não preenchidas ou lidar melhor com usuarioId
       const original = this.livroService.obterPorId(this.editingId!);
       if(original) {
         livro.usuarioId = original.usuarioId;

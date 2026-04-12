@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: 'novo', component: FormularioLivroComponent },
   { path: 'editar/:id', component: FormularioLivroComponent },
   { path: 'detalhe/:id', component: DetalheLivroComponent },
-  { path: '**', redirectTo: '' }  
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth';
-import { Usuario } from '../../models/usuario.model';
+import { AuthService } from '../../../services/auth';
+import { Usuario } from '../../../models/usuario.model';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -19,7 +19,7 @@ export class Navbar implements OnInit {
     this.currentUser$ = this.authService.currentUser$;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   logout() {
     this.authService.logout();
