@@ -1,6 +1,7 @@
 package com.senac.projeto_qa.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,28 @@ public class LivroService {
         return livroRepository.save(livro);
     };
 
+    public Livro updateParcial(String id, Map<String, Object> updates) {
+        return livroRepository.findById(id).map(livro -> {
+            // Aplica apenas os campos que foram enviados
+            updates.forEach((campo, valor) -> {
+                switch (campo) {
+                    case "titulo" -> livro.setTitulo((String) valor);
+                    case "autor" -> livro.setAutor((String) valor);
+                    case "genero" -> livro.setGenero((String) valor);
+                    case "ano" -> livro.setAno((Integer) valor);
+                    case "capaUrl" -> livro.setCapaUrl((String) valor);
+                    case "status" -> livro.setStatus((String) valor);
+                    case "nota" -> livro.setNota((Integer) valor);
+                    case "resumo" -> livro.setResumo((String) valor);
+                    case "usuarioId" -> livro.setUsuarioId((String) valor);
+                }
+            });
+            return livroRepository.save(livro);
+        }).orElse(null);
+    }
+
     public void deleteById(String id) {
         livroRepository.deleteById(id);
     };
 
-    public Livro updateStatus(String id, String status) {
-        Optional<Livro> livroOpt = livroRepository.findById(id);
-        if (livroOpt.isPresent()) {
-            Livro livro = livroOpt.get();
-            livro.setStatus(status);
-            return livroRepository.save(livro);
-        }
-        return null;
-    };
-    
 };

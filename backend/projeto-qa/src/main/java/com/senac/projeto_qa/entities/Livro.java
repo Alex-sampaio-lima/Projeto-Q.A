@@ -28,7 +28,7 @@ public class Livro {
     private String status = "Não Lido";
     private Integer nota;
     private String resumo;
-    private Integer usuarioId;
+    private String usuarioId;
 
     public void setStatus(String status) {
         // Aqui estou validando apenas para ser entre "Lido" ou "Não Lido"
