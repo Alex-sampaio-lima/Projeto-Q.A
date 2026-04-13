@@ -5,24 +5,34 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.senac.projeto_qa.Repository.UsuarioRepository;
 import com.senac.projeto_qa.entities.Usuario;
 
+@Service
 public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     // Cadastro - Usuários
     public Usuario registrar(Usuario usuario) {
-        if (usuarioRepository.existsById(usuario.getId())) {
+
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioExistente.isPresent()) {
             throw new RuntimeException("Email já cadastrado!");
         }
+
         usuario.setNome(usuario.getNome());
         usuario.setEmail(usuario.getEmail());
         usuario.setSenha(usuario.getSenha());
         usuario.setConfirmarSenha(usuario.getConfirmarSenha());
 
+        if (!usuario.getSenha().equals(usuario.getConfirmarSenha())) {
+            throw new RuntimeException("As senhas não conferem!");
+        }
+        // Apenas para não salvar no Banco
+        usuario.setConfirmarSenha(null);
         return usuarioRepository.save(usuario);
     };
 

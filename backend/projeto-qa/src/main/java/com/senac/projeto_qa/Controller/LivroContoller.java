@@ -36,7 +36,7 @@ public class LivroContoller {
         return ResponseEntity.ok(livroService.findAll());
     };
 
-    @GetMapping("usuarioId")
+    @GetMapping("/{usuarioId}")
     public ResponseEntity<List<Livro>> getLivrosByUsuario(@PathVariable String usuarioId) {
         return ResponseEntity.ok(livroService.findByUsuarioId(usuarioId));
     };
