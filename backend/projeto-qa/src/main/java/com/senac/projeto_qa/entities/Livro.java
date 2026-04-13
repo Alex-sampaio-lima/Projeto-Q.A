@@ -1,6 +1,11 @@
 package com.senac.projeto_qa.entities;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,10 +23,20 @@ public class Livro {
 
     @Id
     private String id;
+
+    @NotBlank(message = "O Título é obrigatório")
+    @Size(min = 3, max = 100, message = "O Título deve ter entre 3 e 100 caracteres")
     private String titulo;
+
+    @NotBlank(message = "O autor é obrigatório")
     private String autor;
+
+    @NotBlank(message = "O Gênero é obrigatório")
     private String genero;
+
+    @NotNull(message = "O Ano é obrigatório")
     private Integer ano;
+
     private String capaUrl;
     private String status = "Não Lido";
     private Integer nota;

@@ -1,9 +1,12 @@
 package com.senac.projeto_qa.Service;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.senac.projeto_qa.Repository.LivroRepository;
 import com.senac.projeto_qa.entities.Livro;
 
@@ -22,10 +25,6 @@ public class LivroService {
 
     public Optional<Livro> findById(String id) {
         return livroRepository.findById(id);
-    };
-
-    public Livro save(Livro livro) {
-        return livroRepository.save(livro);
     };
 
     public Livro updateParcial(String id, Map<String, Object> updates) {

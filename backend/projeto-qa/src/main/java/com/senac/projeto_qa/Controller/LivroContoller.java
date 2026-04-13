@@ -1,6 +1,8 @@
 package com.senac.projeto_qa.Controller;
+
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.senac.projeto_qa.Repository.LivroRepository;
 import com.senac.projeto_qa.Service.LivroService;
 import com.senac.projeto_qa.entities.Livro;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/livros")
@@ -23,6 +29,7 @@ public class LivroContoller {
 
     @Autowired
     private LivroService livroService;
+    private LivroRepository livroRepository;
 
     @GetMapping
     public ResponseEntity<List<Livro>> getAllLivros() {
@@ -35,8 +42,8 @@ public class LivroContoller {
     };
 
     @PostMapping
-    public ResponseEntity<Livro> createLivro(@RequestBody Livro livro) {
-        Livro savedLivro = livroService.save(livro);
+    public ResponseEntity<Livro> createLivro(@Valid @RequestBody Livro livro) {
+        Livro savedLivro = livroRepository.save(livro);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLivro);
     };
 

@@ -10,6 +10,4 @@ public interface LivroRepository extends MongoRepository<Livro, String> {
     List<Livro> findByUsuarioId(String usuarioId);
 
     List<Livro> findByStatus(String status);
-
-    List<Livro> findByUsuarioIdAndStatus(String usuarioId, String status);
 };
