@@ -1,69 +1,69 @@
+import { Usuario } from './../models/usuario.model';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Usuario } from '../models/usuario.model';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
+
+
+
 export class AuthService {
+  // private usuario: Usuario;
+  private apiUrl = 'http://localhost:8080';
+  private currentUserSubject: BehaviorSubject<Usuario | null>;
+  public currentUser: Observable<Usuario | null>;
+
   private usersKey = 'biblioteca_users';
   private currentUserKey = 'biblioteca_currentUser';
 
-  private currentUserSubject: BehaviorSubject<Usuario | null>;
-  public currentUser$: Observable<Usuario | null>;
-
-  constructor(private router: Router) {
-    const storedUser = localStorage.getItem(this.currentUserKey);
-    this.currentUserSubject = new BehaviorSubject<Usuario | null>(storedUser ? JSON.parse(storedUser) : null);
-    this.currentUser$ = this.currentUserSubject.asObservable();
-
-    // Iniciar dados vazios se não existir
-    if (!localStorage.getItem(this.usersKey)) {
-      localStorage.setItem(this.usersKey, JSON.stringify([]));
-    }
+  constructor(private http: HttpClient) {
+    // Tenta recuperar o usuário do localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    this.currentUserSubject = new BehaviorSubject<Usuario | null>(
+      storedUser ? JSON.parse(storedUser) : null
+    );
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
   public get currentUserValue(): Usuario | null {
     return this.currentUserSubject.value;
   }
 
-  registrar(usuarioData: Partial<Usuario>): boolean {
-    const usuarios: Usuario[] = JSON.parse(localStorage.getItem(this.usersKey) || '[]');
-
-    if (usuarios.find(u => u.email === usuarioData.email)) {
-      return false; // Email em uso
-    }
-
-    const novoUsuario: Usuario = {
-      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-      nome: usuarioData.nome!,
-      email: usuarioData.email!,
-      senha: usuarioData.senha!
-    };
-
-    usuarios.push(novoUsuario);
-    localStorage.setItem(this.usersKey, JSON.stringify(usuarios));
-    return true;
+  // Método alternativo: login com POST (se preferir)
+  loginWithPost(email: string, senha: string): Observable<any> {
+    const body = { email, senha };
+    return this.http.post(`${this.apiUrl}/auth/login`, body).pipe(
+      tap((response: any) => {
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+          localStorage.setItem('currentUser', JSON.stringify(response.usuario));
+          this.currentUserSubject.next(response.usuario);
+        }
+      })
+    );
   }
 
-  login(email: string, senha: string): boolean {
-    const usuarios: Usuario[] = JSON.parse(localStorage.getItem(this.usersKey) || '[]');
-    const user = usuarios.find(u => u.email === email && u.senha === senha);
 
-    if (user) {
-      // Remove senha antes de salvar a sessão
-      const { senha: _, ...userSemSenha } = user;
-      localStorage.setItem(this.currentUserKey, JSON.stringify(userSemSenha));
-      this.currentUserSubject.next(userSemSenha as Usuario);
-      return true;
-    }
-    return false;
+  // Verifica se o usuário está autenticado
+  isAuthenticated(): boolean {
+    return this.currentUserValue !== null;
   }
 
-  logout() {
-    localStorage.removeItem(this.currentUserKey);
+  // Faz logout
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('authToken');
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
   }
-}
+
+  // Retorna o token para ser usado nos headers
+  getAuthHeader(): HttpHeaders {
+    const token = localStorage.getItem('authToken');
+    return new HttpHeaders({
+      'Authorization': `Basic ${token}`
+    });
+  }
+};

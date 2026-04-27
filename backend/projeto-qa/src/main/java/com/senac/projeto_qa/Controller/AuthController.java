@@ -21,5 +21,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of(
                 "email", auth.getName(),
                 "authenticated", String.valueOf(auth.isAuthenticated())));
-    }
+    };
+    
 }
