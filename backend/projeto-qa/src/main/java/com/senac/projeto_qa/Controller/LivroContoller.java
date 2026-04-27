@@ -51,6 +51,13 @@ public class LivroContoller {
         return ResponseEntity.ok(livroService.findAll());
     };
 
+    @GetMapping("/meusLivros")
+    public ResponseEntity<List<Livro>> getMeusLivros() {
+        Usuario usuario = getUsuarioLogado();
+        List<Livro> meusLivros = livroService.findByUsuarioId(usuario.getId());
+        return ResponseEntity.ok(meusLivros);
+    }
+
     @GetMapping("/{usuarioId}")
     public ResponseEntity<List<Livro>> getLivrosByUsuario(@PathVariable String usuarioId) {
         Usuario usuario = getUsuarioLogado();
@@ -71,19 +78,19 @@ public class LivroContoller {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLivro);
     };
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Livro> updateParcial(@PathVariable String id, @RequestBody Map<String, Object> updates) {
+    @PatchMapping("/{livroId}")
+    public ResponseEntity<Livro> updateParcial(@PathVariable String livroId, @RequestBody Map<String, Object> updates) {
         Usuario usuario = getUsuarioLogado();
-        Livro livro = livroService.findById(id).orElse(null);
+        Livro livro = livroService.findById(livroId).orElse(null);
 
-        // Verificando se o livro é do usuário Logado
+        // Verificando se o livro existe e é do usuário logado
         if (livro == null || !livro.getUsuarioId().equals(usuario.getId())) {
             return ResponseEntity.notFound().build();
         }
 
-        Livro livroAtualizado = livroService.updateParcial(id, updates);
-        return livroAtualizado != null ? ResponseEntity.ok(livroAtualizado) : ResponseEntity.notFound().build();
-    };
+        Livro livroAtualizado = livroService.updateParcial(livroId, updates);
+        return ResponseEntity.ok(livroAtualizado);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLivro(@PathVariable String id) {
