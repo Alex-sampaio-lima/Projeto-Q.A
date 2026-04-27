@@ -13,10 +13,10 @@ import { Observable } from 'rxjs';
   styleUrl: './navbar.scss',
 })
 export class Navbar implements OnInit {
-  currentUser$: Observable<Usuario | null>;
+  currentUser: Observable<Usuario | null>;
 
   constructor(private authService: AuthService, private router: Router) {
-    this.currentUser$ = this.authService.currentUser$;
+    this.currentUser = this.authService.currentUser;
   }
 
   ngOnInit(): void { }

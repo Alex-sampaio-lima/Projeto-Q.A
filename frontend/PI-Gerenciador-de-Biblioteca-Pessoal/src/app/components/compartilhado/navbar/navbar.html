@@ -6,7 +6,7 @@
     </a>
 
     <div class="navbar-menu">
-      <ng-container *ngIf="currentUser$ | async as user; else loggedOut">
+      <ng-container *ngIf="currentUser | async as user; else loggedOut">
         <!-- Logged in state -->
         <a routerLink="/livros" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
           class="nav-link">Dashboard</a>

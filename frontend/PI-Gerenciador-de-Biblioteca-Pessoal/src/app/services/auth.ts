@@ -8,8 +8,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 
-
-
 export class AuthService {
   // private usuario: Usuario;
   private apiUrl = 'http://localhost:8080';
@@ -32,16 +30,28 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  // Método alternativo: login com POST (se preferir)
-  loginWithPost(email: string, senha: string): Observable<any> {
-    const body = { email, senha };
-    return this.http.post(`${this.apiUrl}/auth/login`, body).pipe(
-      tap((response: any) => {
-        if (response.token) {
-          localStorage.setItem('authToken', response.token);
-          localStorage.setItem('currentUser', JSON.stringify(response.usuario));
-          this.currentUserSubject.next(response.usuario);
-        }
+
+  login(email: string, senha: string): Observable<Usuario> {
+    // Cria o header de autenticação Basic
+    const authHeader = 'Basic ' + btoa(`${email}:${senha}`);
+    const headers = new HttpHeaders({ 'Authorization': authHeader });
+
+    // Faz uma requisição GET para um endpoint protegido
+    return this.http.get<Usuario>(`${this.apiUrl}/usuarios`, { headers }).pipe(
+      map(response => {
+        // Cria o objeto usuário
+        const usuario: Usuario = {
+          id: response.id, // Ajuste conforme seu backend
+          email: response.email,
+          nome: response.nome // Ou busque o nome em outro endpoint
+        };
+
+        // Salva no localStorage
+        localStorage.setItem('currentUser', JSON.stringify(usuario));
+        localStorage.setItem('authToken', btoa(`${email}:${senha}`)); // Salva credenciais
+        this.currentUserSubject.next(usuario);
+
+        return usuario;
       })
     );
   }
