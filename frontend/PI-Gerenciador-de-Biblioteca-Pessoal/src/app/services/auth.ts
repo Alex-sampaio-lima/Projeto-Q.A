@@ -39,16 +39,15 @@ export class AuthService {
     // Faz uma requisição GET para um endpoint protegido
     return this.http.get<Usuario>(`${this.apiUrl}/usuarios`, { headers }).pipe(
       map(response => {
-        // Cria o objeto usuário
         const usuario: Usuario = {
-          id: response.id, // Ajuste conforme seu backend
+          id: response.id,
           email: response.email,
-          nome: response.nome // Ou busque o nome em outro endpoint
+          nome: response.nome
         };
 
-        // Salva no localStorage
+        // Salvando no Local Storage
         localStorage.setItem('currentUser', JSON.stringify(usuario));
-        localStorage.setItem('authToken', btoa(`${email}:${senha}`)); // Salva credenciais
+        localStorage.setItem('authToken', btoa(`${email}:${senha}`));
         this.currentUserSubject.next(usuario);
 
         return usuario;
