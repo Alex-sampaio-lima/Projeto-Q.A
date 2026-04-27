@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.senac.projeto_qa.Repository.UsuarioRepository;
@@ -14,6 +15,9 @@ import com.senac.projeto_qa.entities.Usuario;
 public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Cadastro - Usuários
     public Usuario registrar(Usuario usuario) {
@@ -31,6 +35,8 @@ public class UsuarioService {
         if (!usuario.getSenha().equals(usuario.getConfirmarSenha())) {
             throw new RuntimeException("As senhas não conferem!");
         }
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
         // Apenas para não salvar no Banco
         usuario.setConfirmarSenha(null);
         return usuarioRepository.save(usuario);
@@ -46,13 +52,20 @@ public class UsuarioService {
     };
 
     public Usuario updateParcial(String id, Map<String, Object> updates) {
+
         return usuarioRepository.findById(id).map(usuario -> {
             updates.forEach((campo, valor) -> {
                 switch (campo) {
                     case "nome" -> usuario.setNome((String) valor);
                     case "email" -> usuario.setEmail((String) valor);
-                    case "senha" -> usuario.setSenha((String) valor);
-                    case "confirmarSenha" -> usuario.setConfirmarSenha((String) valor);
+                    case "senha" -> {
+                        String novaSenha = (String) valor;
+                        String senhaAtual = usuario.getSenha();
+                        if (!passwordEncoder.matches(novaSenha, senhaAtual)) {
+                            usuario.setSenha(passwordEncoder.encode(novaSenha));
+                        }
+                    }
+                    case "confirmarSenha" -> usuario.setConfirmarSenha((String) null);
                 }
             });
             return usuarioRepository.save(usuario);
