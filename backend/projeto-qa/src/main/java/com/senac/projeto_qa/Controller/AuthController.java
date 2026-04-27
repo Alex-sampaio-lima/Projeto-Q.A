@@ -36,7 +36,7 @@ public class AuthController {
         
         // Retorna os dados completos
         Map<String, Object> response = new HashMap<>();
-        response.put("id", usuario.getId());      // ← ID do usuário!
+        response.put("id", usuario.getId());      
         response.put("email", usuario.getEmail());
         response.put("nome", usuario.getNome());
         response.put("authenticated", true);
