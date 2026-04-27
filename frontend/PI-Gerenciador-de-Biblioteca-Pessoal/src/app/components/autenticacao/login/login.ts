@@ -1,3 +1,4 @@
+// login.ts (atualizado)
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -14,6 +15,7 @@ import { AuthService } from '../../../services/auth';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   error: string = '';
+  loading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,13 +39,23 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const { email, senha } = this.loginForm.value;
-    const success = this.authService.login(email, senha);
+    this.loading = true;
+    this.error = '';
 
-    if (success) {
-      this.router.navigate(['/livros']);
-    } else {
-      this.error = 'E-mail ou senha inválidos. Tente novamente.';
-    }
+    const { email, senha } = this.loginForm.value;
+
+    // Agora usa Observable
+    this.authService.login(email, senha).subscribe({
+      next: (usuario) => {
+        console.log('Login bem-sucedido:', usuario);
+        this.router.navigate(['/livros']);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erro no login:', err);
+        this.error = 'E-mail ou senha inválidos. Tente novamente.';
+        this.loading = false;
+      }
+    });
   }
 }

@@ -14,6 +14,7 @@ import { AuthService } from '../../../services/auth';
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
   error: string = '';
+  loading: boolean = false;  // Adicionado para feedback visual
 
   constructor(
     private fb: FormBuilder,
@@ -45,15 +46,35 @@ export class RegistroComponent implements OnInit {
       return;
     }
 
-    const { nome, email, senha } = this.registroForm.value;
-    const success = this.authService.registrar({ nome, email, senha });
+    this.loading = true;
+    this.error = '';
 
-    if (success) {
-      // Auto-login after registration
-      this.authService.login(email, senha);
-      this.router.navigate(['/livros']);
-    } else {
-      this.error = 'O e-mail informado já está em uso.';
-    }
+    const { nome, email, senha } = this.registroForm.value;
+
+    // ✅ Registrar (Observable)
+    this.authService.registrar({ nome, email, senha }).subscribe({
+      next: (usuario) => {
+        console.log('Registro bem-sucedido:', usuario);
+
+        // ✅ Auto-login após registro (Observable)
+        this.authService.login(email, senha).subscribe({
+          next: () => {
+            this.router.navigate(['/livros']);
+            this.loading = false;
+          },
+          error: (loginError) => {
+            console.error('Auto-login falhou:', loginError);
+            // Mesmo se o login falhar, redireciona para login manual
+            this.router.navigate(['/login']);
+            this.loading = false;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Erro no registro:', err);
+        this.error = err.message || 'O e-mail informado já está em uso ou dados inválidos.';
+        this.loading = false;
+      }
+    });
   }
 }

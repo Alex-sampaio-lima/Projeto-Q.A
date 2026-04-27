@@ -1,6 +1,6 @@
 import { Usuario } from './../models/usuario.model';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -30,6 +30,29 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  registrar(usuario: { nome: string; email: string; senha: string }): Observable<Usuario> {
+    // Cria o objeto com confirmarSenha igual à senha
+    const body = {
+      nome: usuario.nome,
+      email: usuario.email,
+      senha: usuario.senha,
+      confirmarSenha: usuario.senha  // Backend espera confirmarSenha
+    };
+
+    return this.http.post<Usuario>(`${this.apiUrl}/usuarios`, body).pipe(
+      map(response => {
+        console.log('Usuário registrado com sucesso:', response);
+        return response;
+      }),
+      catchError(error => {
+        console.error('Erro no registro:', error);
+        if (error.status === 400 || error.status === 500) {
+          throw new Error('O e-mail informado já está em uso ou dados inválidos.');
+        }
+        throw new Error('Erro ao registrar usuário. Tente novamente.');
+      })
+    );
+  }
 
   login(email: string, senha: string): Observable<Usuario> {
     // Cria o header de autenticação Basic
