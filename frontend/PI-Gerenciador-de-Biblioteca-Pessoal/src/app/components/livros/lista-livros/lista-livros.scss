@@ -1,0 +1,156 @@
+// Container dos botões de ação
+.book-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Base para todos os botões de ação
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+
+  // Efeito de movimento ao passar o mouse (comum para ambos)
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  // Efeito de clique
+  &:active {
+    transform: translateY(0);
+    transition: transform 0.1s;
+  }
+
+  // Ícone do botão
+  .btn-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  // Texto do botão
+  .btn-text {
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+  }
+
+  // Efeito de ripple (opcional)
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+  }
+
+  &:hover::after {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+// Botão de Editar (gradiente primário)
+.btn-edit {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+
+  &:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+  }
+}
+
+// Botão de Excluir (gradiente vermelho)
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+
+  &:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.books-grid {
+  gap: 2px;
+}
+
+.book-cover-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+
+}
+
+.book-cover {
+  transition: transform 0.9s ease;
+  border-radius: 5px;
+
+  &:hover {
+    transform: scale(1.01);
+    border: #4f46e5 2px solid;
+  }
+}
+
+.book-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// Versão mobile responsiva
+@media (max-width: 768px) {
+  .btn-action {
+    padding: 6px 12px;
+
+    .btn-text {
+      font-size: 0.8rem;
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+    }
+  }
+
+  .book-actions {
+    gap: 8px;
+  }
+}
+
+// Para telas muito pequenas (ex: celular em retrato)
+@media (max-width: 480px) {
+  .btn-action {
+    padding: 6px 10px;
+
+    .btn-text {
+      font-size: 0.75rem;
+    }
+
+    .btn-icon {
+      font-size: 0.9rem;
+    }
+  }
+}

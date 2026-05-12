@@ -32,13 +32,17 @@
             </div>
           </div>
 
+          <!-- Botões de Ação - Mesmo design para Editar e Excluir -->
           <div class="book-actions">
-            <a [routerLink]="['/livros/editar', livro.id]" class="btn-icon" title="Editar"
+            <a [routerLink]="['/livros/editar', livro.id]" class="btn-action btn-edit" title="Editar"
               (click)="$event.stopPropagation()">
-              ✎
+              <span class="btn-icon">✎</span>
+              <span class="btn-text">Editar</span>
             </a>
-            <button class="btn-icon btn-icon-danger" title="Excluir" (click)="deletar(livro.id, $event)">
-              🗑
+
+            <button class="btn-action btn-delete" title="Excluir" (click)="deletar(livro.id, $event)">
+              <span class="btn-icon">🗑</span>
+              <span class="btn-text">Excluir</span>
             </button>
           </div>
         </div>
