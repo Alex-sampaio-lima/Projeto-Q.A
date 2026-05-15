@@ -102,7 +102,7 @@ Projeto-Q.A/
 ---
 
 ## 👥 Desenvolvedores
-- **Alex Sampaio Lima**
+- **Alexsander Sampaio Lima**
 - **Ana Julia Ferreira Lima**
 - **Sthephany Viana da Silva**
 
