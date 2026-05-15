@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   h2 {
     font-size: 2rem;
     margin-bottom: 0.2rem;
@@ -21,15 +21,15 @@
   padding: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  
+
   &:hover {
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg), var(--shadow-glow);
-    
+
     .book-cover {
       transform: scale(1.03);
     }
-    
+
     .book-actions {
       opacity: 1;
     }
@@ -64,7 +64,7 @@
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-main);
-  
+
   &.status-lido {
     background: rgba(46, 204, 113, 0.2);
     border-color: rgba(46, 204, 113, 0.4);
@@ -126,7 +126,7 @@
   background: linear-gradient(135deg, rgba(24, 27, 40, 0.9), rgba(15, 17, 26, 0.9));
   padding: 0.5rem;
   border-top-left-radius: var(--radius-md);
-  
+
   .btn-icon {
     background: transparent;
     border: none;
@@ -134,11 +134,11 @@
     font-size: 1.2rem;
     cursor: pointer;
     transition: color 0.2s;
-    
+
     &:hover {
       color: var(--primary);
     }
-    
+
     &.btn-icon-danger:hover {
       color: var(--danger);
     }
@@ -151,7 +151,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   .empty-icon {
     font-size: 4rem;
     margin-bottom: 1rem;
