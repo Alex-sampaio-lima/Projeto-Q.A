@@ -67,10 +67,4 @@ jobs:
 
       - name: Run Frontend Tests
         working-directory: frontend/PI-Gerenciador-de-Biblioteca-Pessoal
-        run: |
-          npm test -- \
-            --watch=false \
-            --pool=forks \
-            --poolOptions.forks.singleFork \
-            --reporter=verbose \
-            --testTimeout=30000
+        run: npm test -- --watch=false
