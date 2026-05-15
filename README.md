@@ -20,6 +20,7 @@ Este projeto é um sistema completo para o gerenciamento de uma biblioteca pesso
 - **Lombok**: Redução de código boilerplate.
 - **Maven**: Gerenciador de dependências e build.
 - **JaCoCo 0.8.12**: Ferramenta de análise de cobertura de código.
+- **Testcontainers**: Para testes de integração com MongoDB real.
 
 ### Frontend
 - **Angular 21**: Framework para a interface do usuário.
@@ -41,7 +42,8 @@ Este projeto é um sistema completo para o gerenciamento de uma biblioteca pesso
 ### Pré-requisitos
 - **JDK 21** instalado.
 - **Node.js 20+** e **npm** instalados.
-- **MongoDB** rodando localmente (porta padrão 27017).
+- **MongoDB** rodando localmente (porta padrão 27017) ou via Docker.
+- **Docker** (necessário para rodar os testes de integração do backend com Testcontainers).
 
 ### 1. Clonar o Repositório
 ```bash
@@ -71,8 +73,6 @@ O frontend estará disponível em `http://localhost:4200`.
 - **Autenticação**: Registro e login de usuários com segurança.
 - **Catálogo de Livros**: Cadastro completo de livros (ISBN, Título, Autor, Ano, etc).
 - **Gestão de Acervo**: Visualização, edição e exclusão de livros da coleção pessoal.
-- **Busca Avançada**: Filtros por autor, título ou categoria.
-- **Dashboard**: Visão geral da biblioteca e estatísticas de leitura.
 
 ---
 
@@ -97,6 +97,9 @@ O relatório HTML será gerado em:
 backend/projeto-qa/target/site/jacoco/index.html
 ```
 Abra este arquivo no navegador para visualizar a cobertura linha a linha.
+
+> [!NOTE]
+> Os testes de backend não utilizam **Mocks**. Eles utilizam **Testcontainers**, o que exige o Docker em execução para subir um container temporário do MongoDB durante os testes.
 
 ### Frontend
 

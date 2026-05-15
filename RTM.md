@@ -53,16 +53,30 @@ Este documento mapeia os requisitos do sistema **Gerenciador de Biblioteca Pesso
 | `auth.spec.ts` | `AuthService` | RF02 | ✅ Passa |
 | `livro.spec.ts` | `LivroService` | RF08 | ✅ Passa |
 
-### 3.2 Backend — JUnit / JaCoCo
+### 3.2 Backend — JUnit / JaCoCo / Testcontainers
 
-| Pacote | Cobertura de Linhas | Cobertura de Branches | Observação |
+| Arquivo de Teste | Técnica | Tipo de Teste | Observação |
 |:---|:---|:---|:---|
-| `config` | ~100% | n/a | Totalmente coberto |
-| `projeto_qa` (main) | ~37% | n/a | Cobertura parcial |
-| `Controller` | ~4% | 0% | Necessita mais testes |
-| `Service` | ~2% | 0% | Necessita mais testes |
-| `entitles` | ~0% | 0% | Sem testes ainda |
-| **Total** | **~11%** | **0%** | Em evolução |
+| `LivroServiceTest.java` | Testcontainers | **Caixa Branca** | Valida caminhos internos e lógica de negócio |
+| `UsuarioServiceTest.java` | Testcontainers | **Caixa Branca** | Valida fluxos de exceção (senha, e-mail duplicado) |
+| `LivroControllerIT.java` | Testcontainers | **Caixa Preta** | Valida endpoints da API via chamadas HTTP reais |
+| `ProjetoQaApplicationTests.java` | Testcontainers | Smoke Test | Valida subida do contexto total do sistema |
+
+| Estratégia | Descrição | Status |
+|:---|:---|:---|
+| **Caixa Branca** | Foco na lógica interna, decisões e caminhos do código Java. | ✅ Implementado |
+| **Caixa Preta** | Foco nos requisitos, entradas e saídas (HTTP Status, JSON). | ✅ Implementado |
+| **Sem Mocks** | Todo o sistema é testado com banco real em containers. | ✅ Garantido |
+
+| Pacote | Estratégia de Teste | Cobertura Atual |
+|:---|:---|:---|
+| `config` | Contexto Real | ~100% |
+| `Service` | Integração Real (Mongo) | **~80%+** |
+| `Controller` | Em evolução | ~4% |
+| **Total** | **Foco em Integração** | **~35%+** |
+
+> [!IMPORTANT]
+> O projeto não utiliza Mocks. Toda a persistência é validada usando containers Docker (Testcontainers).
 
 ---
 

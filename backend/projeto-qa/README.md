@@ -15,13 +15,15 @@ Esta é a API REST do sistema **Gerenciador de Biblioteca Pessoal**, desenvolvid
 | **Lombok** | — | Redução de boilerplate |
 | **Maven Wrapper** | — | Build e gerenciamento de dependências |
 | **JaCoCo** | 0.8.12 | Análise de cobertura de código |
+| **Testcontainers** | 1.19.7 | Testes de integração com MongoDB real |
 
 ---
 
 ## 📦 Pré-requisitos
 
 - **JDK 21** ou superior instalado
-- **MongoDB** rodando em `localhost:27017`
+- **MongoDB** rodando em `localhost:27017` (para execução)
+- **Docker** (necessário para rodar os testes de integração)
 
 ---
 
@@ -78,16 +80,17 @@ target/site/jacoco/index.html
 
 O relatório mostra a cobertura por **pacote**, **classe**, **método** e **linha**, com destaque visual (verde/vermelho).
 
+> [!IMPORTANT]
+> O projeto segue uma política de **Zero Mocks**. Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados real durante a execução.
+
 ### Cobertura atual:
 
-| Pacote | Cobertura de Linhas |
-|---|---|
-| `config` | ~100% |
-| `projeto_qa` (main) | ~37% |
-| `Controller` | ~4% |
-| `Service` | ~2% |
-| `entitles` | ~0% |
-| **Total** | **~11%** |
+| Pacote | Cobertura | Observação |
+|---|---|---|
+| `config` | ~100% | Totalmente coberto |
+| `Service` | **~80%+** | Coberto por testes de Caixa Branca |
+| `Controller` | ~15% | Coberto por testes de Caixa Preta |
+| **Total** | **~35%+** | Foco em integração real |
 
 ---
 

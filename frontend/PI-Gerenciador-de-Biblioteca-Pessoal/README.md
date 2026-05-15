@@ -43,7 +43,7 @@ A interface estará disponível em `http://localhost:4200`.
 
 ## 🧪 Testes
 
-O projeto utiliza **Vitest 4** com ambiente **happy-dom** (configurado em `vitest.config.ts`).
+O projeto utiliza **Vitest 4** com ambiente **happy-dom** (configurado em `vitest.config.ts`). Seguimos uma política de testes que prioriza a integração real com o backend e banco de dados, sem o uso de Mocks no sistema completo.
 
 **Executar todos os testes (modo CI — sem watch):**
 ```bash
