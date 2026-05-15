@@ -102,7 +102,9 @@ Projeto-Q.A/
 ---
 
 ## 👥 Desenvolvedores
-- **Alex Sampaio Lima**
+- **Alexsander Sampaio Lima**
+- **Ana Julia Ferreira Lima**
+- **Sthephany Viana da Silva**
 
 ---
 *Este projeto foi desenvolvido com foco em práticas de Qualidade de Software (Q.A).*
