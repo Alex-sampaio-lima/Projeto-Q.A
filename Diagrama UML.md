@@ -6,24 +6,27 @@ Este documento contém os diagramas de sequência que descrevem o fluxo de inter
 
 ## 1. Fluxo de Autenticação (Login)
 
-Este diagrama descreve o processo desde a entrada das credenciais pelo usuário até o recebimento do acesso ao sistema.
+O usuário insere suas credenciais. O frontend envia uma requisição com **Basic Auth** ao backend, que valida via Spring Security e retorna o perfil do usuário.
 
 ```mermaid
 sequenceDiagram
     actor Usuario as Usuário
-    participant Front as Frontend (Angular)
+    participant Front as LoginComponent (Angular)
+    participant Guard as AuthGuard
     participant Back as Backend (Spring Boot)
     participant DB as MongoDB
 
-    Usuario->>Front: Insere E-mail e Senha
-    Front->>Back: POST /auth/login (credentials)
+    Usuario->>Front: Insere e-mail e senha
+    Front->>Back: GET /usuarios (Basic Auth Header)
     Back->>DB: Busca usuário por e-mail
-    DB-->>Back: Retorna dados do usuário (hash senha)
-    
-    alt Credenciais Válidas
-        Back->>Back: Valida senha (BCrypt)
-        Back-->>Front: 200 OK (Token JWT + Perfil)
-        Front->>Usuario: Redireciona para Dashboard
+    DB-->>Back: Retorna dados do usuário (senha criptografada)
+
+    alt Credenciais Válidas (BCrypt match)
+        Back-->>Front: 200 OK (dados do usuário)
+        Front->>Front: Salva token no localStorage
+        Front->>Guard: Rota /livros (canActivate)
+        Guard-->>Front: Acesso permitido
+        Front->>Usuario: Redireciona para lista de livros
     else Credenciais Inválidas
         Back-->>Front: 401 Unauthorized
         Front->>Usuario: Exibe mensagem de erro
@@ -32,49 +35,123 @@ sequenceDiagram
 
 ---
 
-## 2. Fluxo de Cadastro de Livro
-
-Descreve como um novo livro é adicionado à coleção pessoal do usuário.
+## 2. Fluxo de Cadastro de Usuário (Registro)
 
 ```mermaid
 sequenceDiagram
     actor Usuario as Usuário
-    participant Front as Frontend (Angular)
+    participant Front as RegistroComponent (Angular)
     participant Back as Backend (Spring Boot)
     participant DB as MongoDB
 
-    Usuario->>Front: Preenche formulário de livro
-    Front->>Back: POST /api/books (BookDTO + JWT)
-    
-    Note over Back: Filtro de Segurança valida o Token
-    
-    Back->>Back: Associa livro ao ID do usuário autenticado
-    Back->>DB: Salva documento do livro
-    DB-->>Back: Confirma persistência
-    
-    Back-->>Front: 201 Created (Livro salvo)
-    Front-->>Usuario: Atualiza lista e exibe sucesso
+    Usuario->>Front: Preenche nome, e-mail e senha
+    Front->>Back: POST /usuarios (nome, email, senha, confirmarSenha)
+
+    Back->>Back: Valida campos (@Valid / DTO)
+    Back->>DB: Verifica se e-mail já existe
+
+    alt E-mail disponível
+        Back->>Back: Criptografa senha (BCrypt)
+        Back->>DB: Salva novo usuário
+        DB-->>Back: Confirma persistência
+        Back-->>Front: 201 Created
+        Front->>Usuario: Redireciona para Login
+    else E-mail já cadastrado
+        Back-->>Front: 400 Bad Request
+        Front->>Usuario: Exibe mensagem de erro
+    end
 ```
 
 ---
 
-## 3. Fluxo de Listagem de Livros
+## 3. Fluxo de Cadastro de Livro
 
-Descreve a recuperação segura dos livros pertencentes a um usuário específico.
+Descreve como um novo livro é adicionado à coleção pessoal do usuário autenticado.
 
 ```mermaid
 sequenceDiagram
-    participant Front as Frontend (Angular)
+    actor Usuario as Usuário
+    participant Front as FormularioLivroComponent (Angular)
+    participant Interceptor as AuthInterceptor
     participant Back as Backend (Spring Boot)
     participant DB as MongoDB
 
-    Front->>Back: GET /api/books (JWT Header)
-    Note over Back: Extrai UserID do Token
-    Back->>DB: findByUsuarioId(userId)
-    DB-->>Back: Lista de livros
-    Back-->>Front: 200 OK (Array de Livros)
-    Front->>Front: Renderiza lista no template
+    Usuario->>Front: Preenche formulário (título, autor, ISBN...)
+    Front->>Interceptor: Requisição HTTP
+    Interceptor->>Interceptor: Adiciona Basic Auth Header ao request
+    Interceptor->>Back: POST /livros (LivroDTO + Auth Header)
+
+    Note over Back: Spring Security valida as credenciais
+
+    Back->>Back: Associa livro ao usuário autenticado
+    Back->>DB: Salva documento do livro
+    DB-->>Back: Confirma persistência
+
+    Back-->>Front: 201 Created (livro salvo)
+    Front->>Usuario: Atualiza lista e exibe mensagem de sucesso
 ```
 
 ---
-*Documentação gerada como parte do processo de modelagem de sistema.*
+
+## 4. Fluxo de Listagem de Livros
+
+Descreve a recuperação segura dos livros do usuário autenticado.
+
+```mermaid
+sequenceDiagram
+    actor Usuario as Usuário
+    participant Front as ListaLivrosComponent (Angular)
+    participant Interceptor as AuthInterceptor
+    participant Back as Backend (Spring Boot)
+    participant DB as MongoDB
+
+    Usuario->>Front: Acessa página de livros
+    Front->>Interceptor: GET /livros
+    Interceptor->>Interceptor: Adiciona Basic Auth Header
+    Interceptor->>Back: GET /livros (Auth Header)
+
+    Note over Back: Extrai usuário autenticado do contexto de segurança
+
+    Back->>DB: Busca livros do usuário
+    DB-->>Back: Retorna lista de livros
+    Back-->>Front: 200 OK (array de livros)
+    Front->>Usuario: Renderiza lista na tela
+```
+
+---
+
+## 5. Fluxo do Pipeline de CI/CD
+
+Descreve a sequência de execução automática do GitHub Actions a cada push.
+
+```mermaid
+sequenceDiagram
+    participant Dev as Desenvolvedor
+    participant GH as GitHub
+    participant Build as Job: backend-build
+    participant Test as Job: backend-test
+    participant Cov as Job: backend-coverage (JaCoCo)
+    participant Front as Job: frontend-test (Vitest)
+
+    Dev->>GH: git push
+    GH->>Build: Inicia (compile sem testes)
+    GH->>Front: Inicia em paralelo
+
+    Build-->>GH: ✅ Build OK
+    GH->>Test: Inicia (needs: backend-build)
+
+    Test-->>GH: ✅ Testes OK
+    GH->>Cov: Inicia (needs: backend-test)
+
+    Cov->>Cov: ./mvnw clean verify
+    Cov->>GH: Upload jacoco-report (artefato)
+    Cov->>GH: Upload surefire-reports (artefato)
+    Cov->>GH: Upload app-jar (artefato)
+    Cov-->>GH: ✅ Coverage OK
+
+    Front-->>GH: ✅ 10/10 testes passando
+```
+
+---
+
+*Documentação gerada como parte do processo de modelagem de sistema — Projeto Q.A, Senac 2026.*

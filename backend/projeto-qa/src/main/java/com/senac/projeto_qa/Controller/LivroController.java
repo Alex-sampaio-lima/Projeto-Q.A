@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/livros")
 @CrossOrigin(origins = "*")
-public class LivroContoller {
+public class LivroController {
 
     @Autowired
     private LivroService livroService;
