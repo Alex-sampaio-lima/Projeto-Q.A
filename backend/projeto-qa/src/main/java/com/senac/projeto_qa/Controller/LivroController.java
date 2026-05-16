@@ -58,6 +58,18 @@ public class LivroController {
         return ResponseEntity.ok(meusLivros);
     }
 
+    @GetMapping("/livro/{id}")
+    public ResponseEntity<Livro> getLivroById(@PathVariable String id) {
+        Usuario usuario = getUsuarioLogado();
+        Livro livro = livroService.findById(id).orElse(null);
+
+        if (livro == null || !livro.getUsuarioId().equals(usuario.getId())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(livro);
+    }
+
     @GetMapping("/{usuarioId}")
     public ResponseEntity<List<Livro>> getLivrosByUsuario(@PathVariable String usuarioId) {
         Usuario usuario = getUsuarioLogado();

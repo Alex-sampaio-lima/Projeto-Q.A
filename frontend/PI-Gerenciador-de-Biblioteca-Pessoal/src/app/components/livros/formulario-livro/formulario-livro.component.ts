@@ -84,8 +84,11 @@ export class FormularioLivroComponent implements OnInit, OnDestroy {
     const livroSub = this.livroService.obterPorId(id).subscribe({
       next: (livro) => {
         if (livro) {
+          console.log("Livro recebido do service", livro.titulo);
+
           this.livroOriginal = livro; // ← Guarda o livro original (do 2º arquivo)
           this.livroForm.patchValue({
+
             titulo: livro.titulo,
             autor: livro.autor,
             genero: livro.genero,

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 
-import { FormularioLivroComponent } from './formulario-livro';
+import { FormularioLivroComponent } from './formulario-livro.component';
 
 describe('FormularioLivro', () => {
   let component: FormularioLivroComponent;

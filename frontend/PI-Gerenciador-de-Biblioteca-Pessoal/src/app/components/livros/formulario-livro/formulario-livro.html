@@ -8,7 +8,7 @@
 
   <div class="form-container glass-card">
     <form [formGroup]="livroForm" (ngSubmit)="onSubmit()" class="livro-form">
-      
+
       <div class="form-row">
         <div class="form-group col-md-8">
           <label class="form-label">Título do Livro *</label>
@@ -58,7 +58,8 @@
 
         <div class="form-group col-md-6">
           <label class="form-label">Sua Nota (1 a 5)</label>
-          <input type="number" class="form-control" formControlName="nota" min="1" max="5" placeholder="Sua nota de 1 a 5">
+          <input type="number" class="form-control" formControlName="nota" min="1" max="5"
+            placeholder="Sua nota de 1 a 5">
           <div class="form-error" *ngIf="livroForm.get('nota')?.touched && livroForm.get('nota')?.invalid">
             A nota deve ser entre 1 e 5.
           </div>
@@ -67,7 +68,8 @@
 
       <div class="form-group">
         <label class="form-label">Resumo / Sua Resenha</label>
-        <textarea class="form-control" formControlName="resumo" rows="4" placeholder="O que você achou do livro..."></textarea>
+        <textarea class="form-control" formControlName="resumo" rows="4"
+          placeholder="O que você achou do livro..."></textarea>
       </div>
 
       <div class="form-actions mt-2">

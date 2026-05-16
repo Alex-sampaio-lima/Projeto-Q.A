@@ -76,7 +76,7 @@ export class LivroService {
 
   obterPorId(id: string): Observable<Livro | undefined> {
     console.log('Buscando livro por ID:', id); // Debug
-    return this.http.get<Livro>(`${this.baseUrl}/${id}`, { headers: this.getHeaders() }).pipe(
+    return this.http.get<Livro>(`${this.baseUrl}/livro/${id}`, { headers: this.getHeaders() }).pipe(
       catchError(error => {
         console.error('Erro ao obter livro por ID:', error);
         throw error;
