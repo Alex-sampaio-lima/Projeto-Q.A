@@ -23,7 +23,7 @@ export class LivroService {
   private getHeaders(): HttpHeaders {
     const user = this.authService.currentUserValue;
 
-    if (!user || !user.nome || !user.senha) {
+    if (!user || !user.email || !user.senha) {
       console.error('Usuário não autenticado ou credenciais incompletas');
       return new HttpHeaders({
         'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export class LivroService {
     }
 
     // Garantindo que as credenciais estão corretas
-    const credentials = btoa(`${user.nome}:${user.senha}`);
+    const credentials = btoa(`${user.email}:${user.senha}`);
     console.log('Credenciais codificadas:', credentials); // Para debug
 
     return new HttpHeaders({
@@ -43,8 +43,8 @@ export class LivroService {
   private carregarLivros() {
     const user = this.authService.currentUserValue;
 
-    if (user && user.nome && user.senha) {
-      console.log('Carregando livros com usuário:', user.nome); // Debug
+    if (user && user.email && user.senha) {
+      console.log('Carregando livros com usuário:', user.email); // Debug
 
       this.http.get<Livro[]>(`${this.baseUrl}/meusLivros`, { headers: this.getHeaders() }).subscribe({
         next: (livros) => {
@@ -86,11 +86,11 @@ export class LivroService {
 
   adicionarItem(livro: Livro): Observable<Livro> {
     const user = this.authService.currentUserValue;
-    if (!user || !user.nome || !user.senha) {
+    if (!user || !user.email || !user.senha) {
       throw new Error('Usuário não autenticado');
     }
 
-    const livroParaEnviar = { ...livro, usuarioId: user.id || user.nome };
+    const livroParaEnviar = { ...livro, usuarioId: user.id || user.email };
 
     console.log('Adicionando livro:', livroParaEnviar); // Debug
 
