@@ -13,6 +13,7 @@ export class AuthService {
   private apiUrl = 'http://localhost:8080';
   private currentUserSubject: BehaviorSubject<Usuario | null>;
   public currentUser: Observable<Usuario | null>;
+  public usuario: Usuario | null | undefined;
 
   private usersKey = 'biblioteca_users';
   private currentUserKey = 'biblioteca_currentUser';
@@ -64,20 +65,26 @@ export class AuthService {
       map(response => {
         const usuario: Usuario = {
           id: response.id,
-          email: response.email,
-          nome: response.nome
+          email: email,
+          nome: response.nome,
+          senha: senha
         };
 
         // Salvando no Local Storage
+        console.log(usuario.email);
+        console.log(usuario.senha);
+
+        console.log('Usuário logado com sucesso:', usuario);
+
         localStorage.setItem('currentUser', JSON.stringify(usuario));
         localStorage.setItem('authToken', btoa(`${email}:${senha}`));
         this.currentUserSubject.next(usuario);
 
+        this.usuario = usuario;
         return usuario;
       })
     );
   }
-
 
   // Verifica se o usuário está autenticado
   isAuthenticated(): boolean {

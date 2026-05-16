@@ -12,8 +12,8 @@
           class="nav-link">Dashboard</a>
         <a routerLink="/livros/novo" routerLinkActive="active" class="nav-link">Adicionar Livro</a>
         <div class="user-profile">
-          <div class="avatar">{{ user.nome.charAt(0).toUpperCase() }}</div>
-          <span class="user-name">Olá, {{ user.nome.split(' ')[0] }}</span>
+          <div class="avatar">{{ user?.nome?.charAt(0) || '?' }}</div>
+          <span class="user-name">{{ saudacao(user) }}</span>
           <button class="btn btn-secondary btn-sm ms-3" (click)="logout()">Sair</button>
         </div>
       </ng-container>
