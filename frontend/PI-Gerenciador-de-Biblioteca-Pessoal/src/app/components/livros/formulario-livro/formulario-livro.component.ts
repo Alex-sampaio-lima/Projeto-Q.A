@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -13,11 +13,12 @@ import { Subscription } from 'rxjs';
   templateUrl: './formulario-livro.html',
   styleUrl: './formulario-livro.scss'
 })
-export class FormularioLivroComponent implements OnInit {
+export class FormularioLivroComponent implements OnInit, OnDestroy {
   livroForm: FormGroup;
   isEditMode = false;
   editingId: string | null = null;
-  private subscription: Subscription = new Subscription();
+  livroOriginal: Livro | null = null; // ← Do 2º arquivo
+  private subscriptions: Subscription = new Subscription();
   loading = false;
   error: string | null = null;
 
@@ -49,7 +50,7 @@ export class FormularioLivroComponent implements OnInit {
         this.carregarLivroParaEdicao(id);
       }
     });
-    this.subscription.add(routeSub);
+    this.subscriptions.add(routeSub);
 
     // Validações dinâmicas: Se está lido, pode ter nota
     const statusSub = this.livroForm.get('status')?.valueChanges.subscribe(status => {
@@ -63,7 +64,7 @@ export class FormularioLivroComponent implements OnInit {
     });
 
     if (statusSub) {
-      this.subscription.add(statusSub);
+      this.subscriptions.add(statusSub);
     }
 
     // Inicializa o estado da nota baseado no status atual
@@ -75,7 +76,7 @@ export class FormularioLivroComponent implements OnInit {
 
   ngOnDestroy(): void {
     // Limpa as subscriptions para evitar memory leaks
-    this.subscription.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 
   private carregarLivroParaEdicao(id: string): void {
@@ -83,6 +84,7 @@ export class FormularioLivroComponent implements OnInit {
     const livroSub = this.livroService.obterPorId(id).subscribe({
       next: (livro) => {
         if (livro) {
+          this.livroOriginal = livro; // ← Guarda o livro original (do 2º arquivo)
           this.livroForm.patchValue({
             titulo: livro.titulo,
             autor: livro.autor,
@@ -107,7 +109,7 @@ export class FormularioLivroComponent implements OnInit {
         setTimeout(() => this.router.navigate(['/livros']), 2000);
       }
     });
-    this.subscription.add(livroSub);
+    this.subscriptions.add(livroSub);
   }
 
   onSubmit(): void {
@@ -118,13 +120,14 @@ export class FormularioLivroComponent implements OnInit {
     this.error = null;
 
     if (this.isEditMode && this.editingId) {
-      // Modo de edição - apenas envia os dados do formulário
-      const livro: Partial<Livro> = {
-        id: this.editingId,
-        ...formValue
+      // Modo edição: preserva dados originais (do 2º arquivo)
+      const livro: Livro = {
+        ...this.livroOriginal, // ← Preserva dados originais (incluindo usuarioId)
+        ...formValue,          // Sobrescreve com os novos dados do formulário
+        id: this.editingId     // Garante que o ID está correto
       };
 
-      const updateSub = this.livroService.atualizarItem(livro as Livro).subscribe({
+      const updateSub = this.livroService.atualizarItem(livro).subscribe({
         next: () => {
           this.loading = false;
           this.router.navigate(['/livros']);
@@ -135,9 +138,9 @@ export class FormularioLivroComponent implements OnInit {
           this.loading = false;
         }
       });
-      this.subscription.add(updateSub);
+      this.subscriptions.add(updateSub);
     } else {
-      // Modo de criação - o backend vai gerar o ID e associar ao usuário
+      // Modo criação
       const livro: Partial<Livro> = {
         ...formValue
       };
@@ -153,7 +156,7 @@ export class FormularioLivroComponent implements OnInit {
           this.loading = false;
         }
       });
-      this.subscription.add(createSub);
+      this.subscriptions.add(createSub);
     }
   }
 }
