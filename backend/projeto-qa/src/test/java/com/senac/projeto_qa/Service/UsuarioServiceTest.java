@@ -100,5 +100,50 @@ class UsuarioServiceTest {
         atualizado = usuarioService.updateParcial(usuario.getId(), updates);
         assertThat(atualizado.getSenha()).isNotEqualTo(senhaOriginalCodificada);
         assertThat(passwordEncoder.matches("nova", atualizado.getSenha())).isTrue();
+
+        updates = Map.of("nome", "Novo Nome", "email", "novo@email.com", "confirmarSenha", "algumaCoisa");
+        atualizado = usuarioService.updateParcial(usuario.getId(), updates);
+        assertThat(atualizado.getNome()).isEqualTo("Novo Nome");
+        assertThat(atualizado.getEmail()).isEqualTo("novo@email.com");
+        assertThat(atualizado.getConfirmarSenha()).isNull();
+    }
+
+    @Test
+    @DisplayName("findAll - Deve retornar todos os usuarios")
+    void findAll_deveRetornarTodos() {
+        Usuario u1 = new Usuario(); u1.setNome("U1"); u1.setEmail("u1@email.com"); u1.setSenha("123"); u1.setConfirmarSenha("123");
+        Usuario u2 = new Usuario(); u2.setNome("U2"); u2.setEmail("u2@email.com"); u2.setSenha("123"); u2.setConfirmarSenha("123");
+        usuarioService.registrar(u1);
+        usuarioService.registrar(u2);
+
+        assertThat(usuarioService.findAll()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("findById - Deve encontrar usuario")
+    void findById_deveEncontrar() {
+        Usuario u1 = new Usuario(); u1.setNome("U1"); u1.setEmail("u1@email.com"); u1.setSenha("123"); u1.setConfirmarSenha("123");
+        u1 = usuarioService.registrar(u1);
+
+        assertThat(usuarioService.findById(u1.getId())).isPresent();
+    }
+
+    @Test
+    @DisplayName("deleteById - Deve remover usuario")
+    void deleteById_deveRemover() {
+        Usuario u1 = new Usuario(); u1.setNome("U1"); u1.setEmail("u1@email.com"); u1.setSenha("123"); u1.setConfirmarSenha("123");
+        u1 = usuarioService.registrar(u1);
+
+        usuarioService.deleteById(u1.getId());
+        assertThat(usuarioService.findById(u1.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("registrar - Deve lancar excecao se senhas diferentes")
+    void registrar_deveLancarExcecaoSenhasDiferentes() {
+        Usuario u1 = new Usuario(); u1.setNome("U1"); u1.setEmail("u1@email.com"); u1.setSenha("123"); u1.setConfirmarSenha("456");
+        assertThatThrownBy(() -> usuarioService.registrar(u1))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("As senhas não conferem!");
     }
 }

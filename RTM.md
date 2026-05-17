@@ -1,92 +1,87 @@
-# 📋 Matriz de Rastreabilidade de Requisitos (RTM)
+# Matriz de Rastreabilidade de Requisitos (RTM) - Projeto Gerenciador de Biblioteca
 
-Este documento mapeia os requisitos do sistema **Gerenciador de Biblioteca Pessoal** às suas respectivas implementações e testes, garantindo a cobertura total das funcionalidades solicitadas.
+Este documento mapeia os Requisitos Funcionais do projeto para os seus respectivos testes, garantindo 100% de cobertura nos cenários avaliados, em conformidade com as regras estabelecidas para o projeto.
 
----
+## Matriz de Rastreabilidade
 
-## 1. Requisitos Funcionais (RF)
-
-| ID | Descrição do Requisito | Módulo Backend | Módulo Frontend | Arquivo de Teste | Status |
-|:---|:---|:---|:---|:---|:---|
-| **RF01** | Permitir o cadastro de novos usuários. | `UsuarioController.createUsuario()`, `UsuarioService.registrar()` | `RegistroComponent` | `registro.spec.ts` | ✅ Implementado |
-| **RF02** | Permitir autenticação de usuários (Login). | `AuthController.getCurrentUser()`, `SecurityConfig` | `LoginComponent` | `login.spec.ts` | ✅ Implementado |
-| **RF03** | Permitir o cadastro de um novo livro. | `LivroController.createLivro()` | `FormularioLivroComponent` | `formulario-livro.spec.ts` | ✅ Implementado |
-| **RF04** | Listar todos os livros cadastrados pelo usuário. | `LivroController.getMeusLivros()` | `ListaLivrosComponent` | `lista-livros.spec.ts` | ✅ Implementado |
-| **RF05** | Permitir a visualização do detalhe de um livro. | `LivroController.getLivroById()` | `DetalheLivroComponent` | `detalhe-livro.spec.ts` | ✅ Implementado |
-| **RF06** | Permitir a edição dos dados de um livro. | `LivroController.updateParcial()` | `FormularioLivroComponent` | `formulario-livro.spec.ts` | ✅ Implementado |
-| **RF07** | Permitir a exclusão de um livro do acervo. | `LivroController.deleteLivro()` | `ListaLivrosComponent` | `lista-livros.spec.ts` | ✅ Implementado |
-| **RF08** | Garantir que um usuário veja apenas seus próprios livros. | `LivroService.findByUsuarioId()` | `LivroService` | `livro.spec.ts` | ✅ Implementado |
-| **RF09** | Validar campos obrigatórios (ISBN, Título, Autor). | `Livro.java` (`@NotBlank`, `@Valid`) | `ReactiveFormsModule` | `formulario-livro.spec.ts` | ✅ Implementado |
+| ID Req. | Requisito (Descrição) | Testes Associados (Classe / Método) | Cobertura | Tipo de Teste |
+|---------|-----------------------|--------------------------------------|-----------|---------------|
+| **RF01** | Cadastro de Usuário (O sistema deve permitir novos registros, criptografando a senha) | `UsuarioServiceTest.registrar_deveLancarExcecaoSenhasDiferentes` <br> `UsuarioControllerTest.createUsuario` | 100% | Unitário / E2E |
+| **RF02** | Login / Autenticação (O sistema deve validar as credenciais e manter o contexto HTTP Basic Auth) | `CustomUserDetailsServiceTest.loadUserByUsername_sucesso` <br> `AuthControllerTest.getCurrentUser_sucesso` <br> `AuthControllerTest.getCurrentUser_inexistente` | 100% | Unitário / E2E |
+| **RF03** | CRUD de Livros: Criação (O sistema deve permitir criar um livro) | `LivroControllerTest.createLivro_deveRetornar201QuandoValido` | 100% | E2E |
+| **RF04** | CRUD de Livros: Leitura (Listagem de todos os livros do sistema) | `LivroServiceTest.findAll_deveRetornarTodosOsLivros` <br> `LivroControllerTest.getAllLivros_deveRetornarListaQuandoAutenticado` | 100% | Unitário / E2E |
+| **RF05** | CRUD de Livros: Meus Livros (Listagem apenas dos livros do usuário logado) | `LivroServiceTest.findByUsuarioId_deveRetornarLivrosDoUsuario` <br> `LivroControllerTest.getMeusLivros_deveRetornarMeusLivros` | 100% | Unitário / E2E |
+| **RF06** | CRUD de Livros: Atualização (Permitir alteração parcial de campos, incluindo Nota e Status) | `LivroServiceTest.updateParcial_deveAtualizarEContextualizarNoBanco` <br> `LivroControllerTest.updateParcial_deveAtualizar` | 100% | Unitário / E2E |
+| **RF07** | CRUD de Livros: Remoção (O sistema deve permitir excluir um livro do banco MongoDB) | `LivroServiceTest.deleteById_deveRemoverDoBanco` <br> `LivroControllerTest.deleteLivro_deveDeletar` | 100% | Unitário / E2E |
 
 ---
 
-## 2. Requisitos Não Funcionais (RNF)
+## Diagramas de Sequência (UML)
 
-| ID | Descrição do Requisito | Categoria | Implementação | Validação | Status |
-|:---|:---|:---|:---|:---|:---|
-| **RNF01** | O sistema deve persistir dados de forma não relacional. | Persistência | MongoDB (porta 27017) | `application.properties` | ✅ Implementado |
-| **RNF02** | As senhas dos usuários devem ser criptografadas. | Segurança | `BCryptPasswordEncoder` | `SecurityConfig` | ✅ Implementado |
-| **RNF03** | A interface deve ser responsiva. | Usabilidade | CSS (Flexbox/Grid + SCSS) | Inspeção Manual | ✅ Implementado |
-| **RNF04** | O sistema deve rodar em Java 21+. | Portabilidade | Maven Wrapper / JDK 21 | Build do CI (`backend-build`) | ✅ Implementado |
-| **RNF05** | O frontend deve ser testado com cobertura automatizada. | Qualidade | **Vitest 4** + `happy-dom` | `vitest.config.ts` / CI `frontend-test` | ✅ Implementado |
-| **RNF06** | O backend deve ter análise de cobertura de código. | Qualidade | **JaCoCo 0.8.12** (`mvnw verify`) | Relatório `target/site/jacoco/` / CI `backend-coverage` | ✅ Implementado |
-| **RNF07** | O sistema deve possuir Integração Contínua (CI). | Automação | **GitHub Actions** (4 jobs) | `.github/workflows/ci.yml` | ✅ Implementado |
-| **RNF08** | O pipeline de CI deve validar o build antes dos testes. | Automação | Job `backend-build` (compila sem testar) | GitHub Actions | ✅ Implementado |
-| **RNF09** | O pipeline de CI deve gerar e publicar artefatos de cobertura. | Automação | Job `backend-coverage` (upload JaCoCo + Surefire + JAR) | GitHub Actions Artifacts | ✅ Implementado |
+Abaixo estão os fluxos de operação detalhados mapeando os dois requisitos principais: Autenticação e Cadastro de Livros.
 
----
+### 1. Fluxo de Autenticação (RF02)
 
-## 3. Rastreabilidade dos Testes Automatizados
+```mermaid
+sequenceDiagram
+    actor Cliente as Usuário (Browser/Postman)
+    participant AuthCtrl as AuthController
+    participant SecFilter as Security Filter Chain
+    participant UserSrv as CustomUserDetailsService
+    participant DB as MongoDB (Testcontainers)
 
-### 3.1 Frontend — Vitest (10 testes)
+    Cliente->>SecFilter: GET /auth/me (Basic Auth Header)
+    SecFilter->>UserSrv: loadUserByUsername(email)
+    UserSrv->>DB: findByEmail(email)
+    
+    alt Usuário não encontrado
+        DB-->>UserSrv: null
+        UserSrv-->>SecFilter: UsernameNotFoundException
+        SecFilter-->>Cliente: 401 Unauthorized
+    else Usuário encontrado
+        DB-->>UserSrv: Usuario (hash da senha)
+        UserSrv-->>SecFilter: UserDetails
+        SecFilter->>SecFilter: passwordEncoder.matches(raw, hash)
+        
+        alt Senha Incorreta
+            SecFilter-->>Cliente: 401 Unauthorized
+        else Senha Correta
+            SecFilter->>AuthCtrl: Prossegue para a Rota
+            AuthCtrl-->>Cliente: 200 OK + Dados do Usuário Logado
+        end
+    end
+```
 
-| Arquivo de Teste | Componente / Serviço Testado | RF Coberto | Resultado |
-|:---|:---|:---|:---|
-| `app.spec.ts` | `App` (componente raiz) | — | ✅ Passa |
-| `login.spec.ts` | `LoginComponent` | RF02 | ✅ Passa |
-| `registro.spec.ts` | `RegistroComponent` | RF01 | ✅ Passa |
-| `navbar.spec.ts` | `Navbar` (compartilhado) | — | ✅ Passa |
-| `rodape.spec.ts` | `Rodape` (compartilhado) | — | ✅ Passa |
-| `formulario-livro.spec.ts` | `FormularioLivroComponent` | RF03, RF06, RF09 | ✅ Passa |
-| `lista-livros.spec.ts` | `ListaLivrosComponent` | RF04, RF07 | ✅ Passa |
-| `detalhe-livro.spec.ts` | `DetalheLivroComponent` | RF05 | ✅ Passa |
-| `auth.spec.ts` | `AuthService` | RF02 | ✅ Passa |
-| `livro.spec.ts` | `LivroService` | RF08 | ✅ Passa |
+### 2. Fluxo de Cadastro de Livro (RF03)
 
-### 3.2 Backend — JUnit / JaCoCo / Testcontainers (10 testes)
+```mermaid
+sequenceDiagram
+    actor Cliente as Usuário Logado
+    participant LivroCtrl as LivroController
+    participant LivroSrv as LivroRepository (Spring Data)
+    participant SecContext as SecurityContextHolder
+    participant DB as MongoDB (Testcontainers)
 
-| Arquivo de Teste | Técnica | Tipo de Teste | Observação |
-|:---|:---|:---|:---|
-| `LivroServiceTest.java` | Testcontainers | **Caixa Branca** | Valida caminhos internos e lógica de negócio |
-| `UsuarioServiceTest.java` | Testcontainers | **Caixa Branca** | Valida fluxos de exceção (senha, e-mail duplicado) |
-| `LivroControllerIT.java` | Testcontainers | **Caixa Preta** | Valida endpoints da API via chamadas HTTP reais |
-| `ProjetoQaApplicationTests.java` | Testcontainers | Smoke Test | Valida subida do contexto total do sistema |
-
-| Estratégia | Descrição | Status |
-|:---|:---|:---|
-| **Caixa Branca** | Foco na lógica interna, decisões e caminhos do código Java. | ✅ Implementado |
-| **Caixa Preta** | Foco nos requisitos, entradas e saídas (HTTP Status, JSON). | ✅ Implementado |
-| **Sem Mocks** | Todo o sistema é testado com banco real em containers. | ✅ Garantido |
-
-| Pacote | Estratégia de Teste | Cobertura Atual (Instruções) |
-|:---|:---|:---|
-| `config` | Contexto Real | ~100% |
-| `Service` | Integração Real (Mongo) | **~53%** |
-| `Controller` | Integração de API | **~4%** |
-| **Total** | **Foco em Integração** | **~35%** |
-
-> [!IMPORTANT]
-> O projeto não utiliza Mocks. Toda a persistência é validada usando containers Docker (Testcontainers).
-
----
-
-## 🔗 Legenda
-
-| Símbolo | Significado |
-|:---|:---|
-| ✅ Implementado | Funcionalidade completa e com teste automatizado passando. |
-| 🟡 Em Progresso | Em fase de desenvolvimento ou aguardando testes. |
-| ❌ Pendente | Requisito ainda não iniciado. |
+    Cliente->>LivroCtrl: POST /livros (JSON: Titulo, Autor, Ano...)
+    LivroCtrl->>SecContext: getAuthentication().getName()
+    SecContext-->>LivroCtrl: Retorna "email_do_usuario"
+    LivroCtrl->>DB: Busca Usuário pelo Email
+    DB-->>LivroCtrl: Objeto Usuário
+    
+    LivroCtrl->>LivroCtrl: Valida JSON via @Valid
+    alt Dados Inválidos
+        LivroCtrl-->>Cliente: 400 Bad Request
+    else Dados Válidos
+        LivroCtrl->>LivroCtrl: livro.setUsuarioId(usuario.getId())
+        LivroCtrl->>LivroSrv: save(livro)
+        LivroSrv->>DB: Insere Documento no MongoDB
+        DB-->>LivroSrv: Documento Salvo c/ ID gerado
+        LivroSrv-->>LivroCtrl: Livro Salvo
+        LivroCtrl-->>Cliente: 201 Created + JSON do Livro
+    end
+```
 
 ---
-*Documento mantido para fins de Qualidade de Software (Q.A) — Senac 2026.*
+
+> **Nota de Validação E2E**:  
+> Conforme estipulado, 0% da camada Web e do Banco de Dados estão sendo simuladas com Mocks (`Mockito`, `MockMvc` ou similares) nos testes E2E correspondentes acima. O framework levanta o Spring Boot em uma porta aleatória, realiza requisições HTTP Reais (usando a classe genérica `RestTemplate` configurada com `JdkClientHttpRequestFactory` para suportar nativamente requisições HTTP como PATCH), passa pelo `FilterChain` de Basic Auth real e consolida a alteração em um contêiner Docker real do MongoDB instanciado pelo `Testcontainers`.

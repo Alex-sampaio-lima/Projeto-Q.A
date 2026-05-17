@@ -17,13 +17,13 @@ sequenceDiagram
     participant DB as MongoDB
 
     Usuario->>Front: Insere e-mail e senha
-    Front->>Back: GET /usuarios (Basic Auth Header)
+    Front->>Back: GET /auth/me (Basic Auth Header)
     Back->>DB: Busca usuário por e-mail
     DB-->>Back: Retorna dados do usuário (senha criptografada)
 
     alt Credenciais Válidas (BCrypt match)
         Back-->>Front: 200 OK (dados do usuário)
-        Front->>Front: Salva token no localStorage
+        Front->>Front: Salva credenciais no localStorage (Base64)
         Front->>Guard: Rota /livros (canActivate)
         Guard-->>Front: Acesso permitido
         Front->>Usuario: Redireciona para lista de livros
@@ -79,11 +79,11 @@ sequenceDiagram
     Usuario->>Front: Preenche formulário (título, autor, ISBN...)
     Front->>Interceptor: Requisição HTTP
     Interceptor->>Interceptor: Adiciona Basic Auth Header ao request
-    Interceptor->>Back: POST /livros (LivroDTO + Auth Header)
+    Interceptor->>Back: POST /livros (Livro JSON + Auth Header)
 
     Note over Back: Spring Security valida as credenciais
 
-    Back->>Back: Associa livro ao usuário autenticado
+    Back->>Back: Associa livro ao usuário autenticado (getUsuarioLogado)
     Back->>DB: Salva documento do livro
     DB-->>Back: Confirma persistência
 
@@ -106,13 +106,13 @@ sequenceDiagram
     participant DB as MongoDB
 
     Usuario->>Front: Acessa página de livros
-    Front->>Interceptor: GET /livros
+    Front->>Interceptor: GET /livros/meusLivros
     Interceptor->>Interceptor: Adiciona Basic Auth Header
-    Interceptor->>Back: GET /livros (Auth Header)
+    Interceptor->>Back: GET /livros/meusLivros (Auth Header)
 
     Note over Back: Extrai usuário autenticado do contexto de segurança
 
-    Back->>DB: Busca livros do usuário
+    Back->>DB: Busca livros do usuário (findByUsuarioId)
     DB-->>Back: Retorna lista de livros
     Back-->>Front: 200 OK (array de livros)
     Front->>Usuario: Renderiza lista na tela

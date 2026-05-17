@@ -1,7 +1,11 @@
 package com.senac.projeto_qa.Service;
 
-import com.senac.projeto_qa.Repository.LivroRepository;
-import com.senac.projeto_qa.entities.Livro;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +17,8 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import com.senac.projeto_qa.Repository.LivroRepository;
+import com.senac.projeto_qa.entities.Livro;
 
 @SpringBootTest
 @Testcontainers
@@ -94,7 +94,7 @@ class LivroServiceTest {
         Map<String, Object> updates = Map.of("titulo", "Dom Casmurro - Edição de Teste");
         Livro resultado = livroService.updateParcial(livro1.getId(), updates);
         assertThat(resultado.getTitulo()).isEqualTo("Dom Casmurro - Edição de Teste");
-        
+
         Livro noBanco = livroRepository.findById(livro1.getId()).orElseThrow();
         assertThat(noBanco.getTitulo()).isEqualTo("Dom Casmurro - Edição de Teste");
     }
@@ -112,5 +112,28 @@ class LivroServiceTest {
     void deleteById_deveRemoverDoBanco() {
         livroService.deleteById(livro1.getId());
         assertThat(livroRepository.findById(livro1.getId())).isEmpty();
+    }
+
+    @Test
+    @DisplayName("updateParcial - Deve atualizar todos os campos no MongoDB")
+    void updateParcial_deveAtualizarTodosOsCampos() {
+        Map<String, Object> updates = Map.of(
+            "autor", "Novo Autor",
+            "genero", "Novo Genero",
+            "ano", 2025,
+            "capaUrl", "http://nova-capa",
+            "status", "Lido",
+            "resumo", "Novo Resumo",
+            "usuarioId", "novo-usuario-id"
+        );
+        Livro resultado = livroService.updateParcial(livro1.getId(), updates);
+        
+        assertThat(resultado.getAutor()).isEqualTo("Novo Autor");
+        assertThat(resultado.getGenero()).isEqualTo("Novo Genero");
+        assertThat(resultado.getAno()).isEqualTo(2025);
+        assertThat(resultado.getCapaUrl()).isEqualTo("http://nova-capa");
+        assertThat(resultado.getStatus()).isEqualTo("Lido");
+        assertThat(resultado.getResumo()).isEqualTo("Novo Resumo");
+        assertThat(resultado.getUsuarioId()).isEqualTo("novo-usuario-id");
     }
 }
