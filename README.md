@@ -101,6 +101,22 @@ Abra este arquivo no navegador para visualizar a cobertura linha a linha.
 > [!NOTE]
 > Os testes de backend não utilizam **Mocks**. Eles utilizam **Testcontainers**, o que exige o Docker em execução para subir um container temporário do MongoDB durante os testes.
 
+#### 🐳 Solução de Problemas com Docker (Testcontainers) no Windows
+
+Se você encontrar o erro `Could not find a valid Docker environment` ou `BadRequestException (Status 400)` ao rodar os testes do backend, faça o seguinte:
+
+1. **Ajuste o Contexto do Docker**:
+   No terminal, mude para o contexto padrão:
+   ```bash
+   docker context use default
+   ```
+2. **Configure a Versão da API**:
+   Crie um arquivo chamado **`.docker-java.properties`** na pasta do seu usuário do Windows (ex: `C:\Users\SEU_USUARIO`) e insira:
+   ```properties
+   api.version=1.44
+   ```
+   Depois disso, execute `./mvnw clean test` novamente.
+
 ### Frontend
 
 **Rodar os testes com Vitest:**
@@ -168,6 +184,7 @@ Projeto-Q.A/
 - **Alexsander Sampaio Lima**
 - **Ana Julia Ferreira Lima**
 - **Sthephany Viana da Silva**
+- **Thalita**
 
 ---
 *Este projeto foi desenvolvido com foco em práticas de Qualidade de Software (Q.A).*

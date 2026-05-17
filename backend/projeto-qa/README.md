@@ -72,7 +72,6 @@ A API estará disponível em `http://localhost:8080`.
 ```
 
 ### Visualizar o relatório JaCoCo:
-
 Após rodar `./mvnw clean verify`, abra o arquivo gerado no navegador:
 ```
 target/site/jacoco/index.html
@@ -81,16 +80,45 @@ target/site/jacoco/index.html
 O relatório mostra a cobertura por **pacote**, **classe**, **método** e **linha**, com destaque visual (verde/vermelho).
 
 > [!IMPORTANT]
-> O projeto segue uma política de **Zero Mocks**. Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados real durante a execução.
+> O projeto segue uma política de **Zero Mocks**. Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados real durante a execução do MongoDB.
 
-### Cobertura atual:
+---
+
+### 🐳 Solução de Problemas com Docker (Testcontainers)
+
+Se ao rodar `./mvnw clean test` você encontrar o erro `Could not find a valid Docker environment` ou `BadRequestException (Status 400)`, siga estes passos para ajustar a integração com o Docker Desktop no Windows:
+
+#### 1. Verificar o Contexto do Docker
+Certifique-se de que o Docker está usando o contexto `default` (que se conecta no Named Pipe correto do Windows):
+```bash
+# Listar contextos
+docker context ls
+
+# Alterar para o contexto padrão
+docker context use default
+```
+
+#### 2. Corrigir Incompatibilidade de API (Docker Desktop v29+)
+Versões modernas do Docker Desktop exigem versões de API mais recentes que as configuradas por padrão em bibliotecas antigas do Testcontainers. Para forçar a versão correta da API:
+
+1. Acesse o seu diretório de usuário (ex: `C:\Users\SEU_USUARIO`).
+2. Crie ou edite o arquivo chamado **`.docker-java.properties`** (garanta que não possui extensão `.txt`).
+3. Adicione a seguinte linha dentro do arquivo:
+   ```properties
+   api.version=1.44
+   ```
+4. Salve o arquivo e execute os testes novamente com `./mvnw clean test`.
+
+---
+
+### Cobertura atual (Instruções):
 
 | Pacote | Cobertura | Observação |
 |---|---|---|
 | `config` | ~100% | Totalmente coberto |
-| `Service` | **~80%+** | Coberto por testes de Caixa Branca |
-| `Controller` | ~15% | Coberto por testes de Caixa Preta |
-| **Total** | **~35%+** | Foco em integração real |
+| `Service` | **~53%** | Coberto por testes de Caixa Branca |
+| `Controller` | **~4%** | Coberto por testes de Caixa Preta |
+| **Total** | **~35%** | Foco em integração real |
 
 ---
 

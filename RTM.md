@@ -8,15 +8,15 @@ Este documento mapeia os requisitos do sistema **Gerenciador de Biblioteca Pesso
 
 | ID | Descrição do Requisito | Módulo Backend | Módulo Frontend | Arquivo de Teste | Status |
 |:---|:---|:---|:---|:---|:---|
-| **RF01** | Permitir o cadastro de novos usuários. | `UsuarioController`, `UsuarioService` | `RegistroComponent` | `registro.spec.ts` | ✅ Implementado |
-| **RF02** | Permitir autenticação de usuários (Login). | `SecurityConfig` | `LoginComponent` | `login.spec.ts` | ✅ Implementado |
-| **RF03** | Permitir o cadastro de um novo livro. | `LivroController.create()` | `FormularioLivroComponent` | `formulario-livro.spec.ts` | ✅ Implementado |
-| **RF04** | Listar todos os livros cadastrados pelo usuário. | `LivroController.findAll()` | `ListaLivrosComponent` | `lista-livros.spec.ts` | ✅ Implementado |
-| **RF05** | Permitir a visualização do detalhe de um livro. | `LivroController.findById()` | `DetalheLivroComponent` | `detalhe-livro.spec.ts` | ✅ Implementado |
-| **RF06** | Permitir a edição dos dados de um livro. | `LivroController.update()` | `FormularioLivroComponent` | `formulario-livro.spec.ts` | ✅ Implementado |
-| **RF07** | Permitir a exclusão de um livro do acervo. | `LivroController.delete()` | `ListaLivrosComponent` | `lista-livros.spec.ts` | ✅ Implementado |
-| **RF08** | Garantir que um usuário veja apenas seus próprios livros. | `LivroService` (filtro por usuário) | `LivroService` | `livro.spec.ts` | ✅ Implementado |
-| **RF09** | Validar campos obrigatórios (ISBN, Título, Autor). | `LivroDTO` (`@Valid`) | `ReactiveFormsModule` | `formulario-livro.spec.ts` | ✅ Implementado |
+| **RF01** | Permitir o cadastro de novos usuários. | `UsuarioController.createUsuario()`, `UsuarioService.registrar()` | `RegistroComponent` | `registro.spec.ts` | ✅ Implementado |
+| **RF02** | Permitir autenticação de usuários (Login). | `AuthController.getCurrentUser()`, `SecurityConfig` | `LoginComponent` | `login.spec.ts` | ✅ Implementado |
+| **RF03** | Permitir o cadastro de um novo livro. | `LivroController.createLivro()` | `FormularioLivroComponent` | `formulario-livro.spec.ts` | ✅ Implementado |
+| **RF04** | Listar todos os livros cadastrados pelo usuário. | `LivroController.getMeusLivros()` | `ListaLivrosComponent` | `lista-livros.spec.ts` | ✅ Implementado |
+| **RF05** | Permitir a visualização do detalhe de um livro. | `LivroController.getLivroById()` | `DetalheLivroComponent` | `detalhe-livro.spec.ts` | ✅ Implementado |
+| **RF06** | Permitir a edição dos dados de um livro. | `LivroController.updateParcial()` | `FormularioLivroComponent` | `formulario-livro.spec.ts` | ✅ Implementado |
+| **RF07** | Permitir a exclusão de um livro do acervo. | `LivroController.deleteLivro()` | `ListaLivrosComponent` | `lista-livros.spec.ts` | ✅ Implementado |
+| **RF08** | Garantir que um usuário veja apenas seus próprios livros. | `LivroService.findByUsuarioId()` | `LivroService` | `livro.spec.ts` | ✅ Implementado |
+| **RF09** | Validar campos obrigatórios (ISBN, Título, Autor). | `Livro.java` (`@NotBlank`, `@Valid`) | `ReactiveFormsModule` | `formulario-livro.spec.ts` | ✅ Implementado |
 
 ---
 
@@ -53,7 +53,7 @@ Este documento mapeia os requisitos do sistema **Gerenciador de Biblioteca Pesso
 | `auth.spec.ts` | `AuthService` | RF02 | ✅ Passa |
 | `livro.spec.ts` | `LivroService` | RF08 | ✅ Passa |
 
-### 3.2 Backend — JUnit / JaCoCo / Testcontainers
+### 3.2 Backend — JUnit / JaCoCo / Testcontainers (10 testes)
 
 | Arquivo de Teste | Técnica | Tipo de Teste | Observação |
 |:---|:---|:---|:---|
@@ -68,12 +68,12 @@ Este documento mapeia os requisitos do sistema **Gerenciador de Biblioteca Pesso
 | **Caixa Preta** | Foco nos requisitos, entradas e saídas (HTTP Status, JSON). | ✅ Implementado |
 | **Sem Mocks** | Todo o sistema é testado com banco real em containers. | ✅ Garantido |
 
-| Pacote | Estratégia de Teste | Cobertura Atual |
+| Pacote | Estratégia de Teste | Cobertura Atual (Instruções) |
 |:---|:---|:---|
 | `config` | Contexto Real | ~100% |
-| `Service` | Integração Real (Mongo) | **~80%+** |
-| `Controller` | Em evolução | ~4% |
-| **Total** | **Foco em Integração** | **~35%+** |
+| `Service` | Integração Real (Mongo) | **~53%** |
+| `Controller` | Integração de API | **~4%** |
+| **Total** | **Foco em Integração** | **~35%** |
 
 > [!IMPORTANT]
 > O projeto não utiliza Mocks. Toda a persistência é validada usando containers Docker (Testcontainers).
