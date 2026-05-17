@@ -32,8 +32,6 @@ export class Navbar implements OnInit {
 
   saudacao(user: Usuario | null): string {
     if (user && user.email) {
-      console.log(user.email);
-
       const primeiroNome = user.email.split('@')[0];
       return `Olá, ${primeiroNome}`;
     }
