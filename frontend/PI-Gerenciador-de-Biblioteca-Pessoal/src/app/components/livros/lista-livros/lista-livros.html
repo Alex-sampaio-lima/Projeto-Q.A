@@ -12,7 +12,7 @@
   <ng-container *ngIf="livros$ | async as livros">
 
     <div class="books-grid" *ngIf="livros.length > 0; else emptyState">
-      <div class="book-card glass-card" *ngFor="let livro of livros" [routerLink]="['/livros/detalhe', livro.id]">
+      <div class="book-card glass-card" *ngFor="let livro of livros" [routerLink]="['/livros/editar/', livro.id]">
         <div class="book-cover-wrapper">
           <img [src]="livro.capaUrl || 'https://via.placeholder.com/300x450/1f2334/8b92a5?text=Sem+Capa'"
             [alt]="livro.titulo" class="book-cover">
