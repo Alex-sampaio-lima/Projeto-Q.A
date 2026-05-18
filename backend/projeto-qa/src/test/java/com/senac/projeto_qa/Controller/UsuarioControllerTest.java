@@ -43,7 +43,8 @@ class UsuarioControllerTest {
     @LocalServerPort
     private int port;
 
-    private RestTemplate restTemplate = new RestTemplate(new org.springframework.http.client.JdkClientHttpRequestFactory());
+    private RestTemplate restTemplate = new RestTemplate(
+            new org.springframework.http.client.JdkClientHttpRequestFactory());
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -68,7 +69,8 @@ class UsuarioControllerTest {
         u.setSenha(passwordEncoder.encode("123"));
         usuarioRepository.save(u);
 
-        ResponseEntity<Usuario[]> response = restTemplate.getForEntity("http://localhost:" + port + "/usuarios", Usuario[].class);
+        ResponseEntity<Usuario[]> response = restTemplate.getForEntity("http://localhost:" + port + "/usuarios",
+                Usuario[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -84,7 +86,8 @@ class UsuarioControllerTest {
         u.setSenha(passwordEncoder.encode("123"));
         u = usuarioRepository.save(u);
 
-        ResponseEntity<Usuario> response = restTemplate.getForEntity("http://localhost:" + port + "/usuarios/" + u.getId(), Usuario.class);
+        ResponseEntity<Usuario> response = restTemplate
+                .getForEntity("http://localhost:" + port + "/usuarios/" + u.getId(), Usuario.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -116,7 +119,8 @@ class UsuarioControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(json, headers);
 
-        ResponseEntity<Usuario> response = restTemplate.postForEntity("http://localhost:" + port + "/usuarios", request, Usuario.class);
+        ResponseEntity<Usuario> response = restTemplate.postForEntity("http://localhost:" + port + "/usuarios", request,
+                Usuario.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
@@ -146,8 +150,7 @@ class UsuarioControllerTest {
                 "http://localhost:" + port + "/usuarios/" + u.getId(),
                 HttpMethod.PATCH,
                 request,
-                Usuario.class
-        );
+                Usuario.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -173,8 +176,7 @@ class UsuarioControllerTest {
                     "http://localhost:" + port + "/usuarios/ID_FALSO",
                     HttpMethod.PATCH,
                     request,
-                    String.class
-            );
+                    String.class);
         } catch (HttpClientErrorException e) {
             assertThat(e.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         }
@@ -197,8 +199,7 @@ class UsuarioControllerTest {
                 "http://localhost:" + port + "/usuarios/" + u.getId(),
                 HttpMethod.DELETE,
                 request,
-                Void.class
-        );
+                Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(usuarioRepository.findById(u.getId())).isEmpty();
