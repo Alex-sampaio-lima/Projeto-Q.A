@@ -117,10 +117,9 @@ jobs:
         run: chmod +x mvnw
 
       - name: Run full verification with coverage and SonarCloud
-        run: ./mvnw -B -ntp clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Alex-sampaio-lima_Projeto-Q.A -Dsonar.organization=alex-sampaio-lima -Dsonar.host.url=https://sonarcloud.io
+        run: ./mvnw -B -ntp clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Alex-sampaio-lima_Projeto-Q.A -Dsonar.organization=alex-sampaio-lima -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
         env:
           SPRING_DATA_MONGODB_URI: ${{ env.MONGODB_URI }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload JaCoCo report
         if: always()
