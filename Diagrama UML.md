@@ -154,4 +154,57 @@ sequenceDiagram
 
 ---
 
+## 6. Diagramas de Sequência de Teste Unitário (Modelo de Teste de Fluxo)
+
+Esta seção apresenta o modelo de testes unitários sem mocks sob a perspectiva de diagramas de sequência.
+
+### A) Modelo Padrão do Professor (Cenário de Referência)
+
+Este diagrama representa a estrutura exata fornecida no modelo de referência (Calculadora/Validador/Repositório):
+
+```mermaid
+sequenceDiagram
+    participant Teste as Teste Unitário
+    participant Calc as Calculadora
+    participant Valid as Validador
+    participant Repo as Repositório
+
+    Teste->>Calc: somar(a, b)
+    Calc->>Valid: validarEntradas(a, b)
+    Valid-->>Calc: true
+    Calc->>Calc: executarSoma(a, b)
+    Calc->>Repo: registrarOperacao()
+    Repo-->>Calc: OK
+    Calc-->>Teste: resultado: int
+```
+
+### B) Modelo Aplicado ao Nosso Projeto (Cenário Real: Cadastro de Usuário)
+
+Este diagrama demonstra a aplicação prática e literal do modelo do professor no nosso projeto real de Q.A, mapeando a classe de teste exercitando as regras de negócio sem mocks e utilizando exatamente as assinaturas de métodos presentes em `UsuarioService` e `UsuarioServiceTest`:
+
+```mermaid
+sequenceDiagram
+    participant Teste as Teste Unitário (UsuarioServiceTest)
+    participant Service as UsuarioService (Serviço)
+    participant Encoder as PasswordEncoder (Validador/Helper)
+    participant Repo as UsuarioRepository (Repositório MongoDB)
+
+    Teste->>Service: registrar(usuario)
+    
+    Service->>Repo: findByEmail(usuario.getEmail())
+    Repo-->>Service: Optional.empty()
+    
+    Note over Service: Valida se usuario.getSenha().equals(usuario.getConfirmarSenha())
+    
+    Service->>Encoder: encode(usuario.getSenha())
+    Encoder-->>Service: senhaCriptografada: String
+    
+    Service->>Repo: save(usuario)
+    Repo-->>Service: salvo: Usuario (com ID gerado)
+    
+    Service-->>Teste: salvo: Usuario
+```
+
+---
+
 *Documentação gerada como parte do processo de modelagem de sistema — Projeto Q.A, Senac 2026.*
