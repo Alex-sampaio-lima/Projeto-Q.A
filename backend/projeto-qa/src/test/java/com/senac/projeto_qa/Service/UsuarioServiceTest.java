@@ -5,6 +5,8 @@ import com.senac.projeto_qa.entities.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -138,10 +140,11 @@ class UsuarioServiceTest {
         assertThat(usuarioService.findById(u1.getId())).isEmpty();
     }
 
-    @Test
-    @DisplayName("registrar - Deve lancar excecao se senhas diferentes")
-    void registrar_deveLancarExcecaoSenhasDiferentes() {
-        Usuario u1 = new Usuario(); u1.setNome("U1"); u1.setEmail("u1@email.com"); u1.setSenha("123"); u1.setConfirmarSenha("456");
+    @ParameterizedTest
+    @ValueSource(strings = {"456", "senhaDiferente", "outracoisa", ""})
+    @DisplayName("registrar - Deve lancar excecao se senhas diferentes (Parametrizado)")
+    void registrar_deveLancarExcecaoSenhasDiferentes(String senhaIncorreta) {
+        Usuario u1 = new Usuario(); u1.setNome("U1"); u1.setEmail("u1@email.com"); u1.setSenha("123"); u1.setConfirmarSenha(senhaIncorreta);
         assertThatThrownBy(() -> usuarioService.registrar(u1))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("As senhas não conferem!");

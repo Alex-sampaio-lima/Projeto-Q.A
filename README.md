@@ -5,6 +5,7 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular)
 ![CI](https://github.com/Alex-sampaio-lima/Projeto-Q.A/actions/workflows/ci.yml/badge.svg)
+![SonarCloud](https://img.shields.io/badge/SonarCloud-100%25-brightgreen?style=for-the-badge&logo=sonarcloud)
 
 Este projeto é um sistema completo para o gerenciamento de uma biblioteca pessoal, permitindo que usuários organizem seus livros, acompanhem leituras e gerenciem sua coleção de forma eficiente. Desenvolvido como parte do **Projeto Q.A (Qualidade de Software)** no Senac.
 
@@ -21,6 +22,7 @@ Este projeto é um sistema completo para o gerenciamento de uma biblioteca pesso
 - **Maven**: Gerenciador de dependências e build.
 - **JaCoCo 0.8.12**: Ferramenta de análise de cobertura de código.
 - **Testcontainers**: Para testes de integração com MongoDB real.
+- **WireMock (VCR)**: Utilizado para mockar e gravar chamadas HTTP da API do Google Books.
 
 ### Frontend
 - **Angular 21**: Framework para a interface do usuário.
@@ -99,7 +101,7 @@ backend/projeto-qa/target/site/jacoco/index.html
 Abra este arquivo no navegador para visualizar a cobertura linha a linha.
 
 > [!NOTE]
-> Os testes de backend não utilizam **Mocks**. Eles utilizam **Testcontainers**, o que exige o Docker em execução para subir um container temporário do MongoDB durante os testes.
+> Os testes de backend não utilizam **Mocks de Código** (como Mockito). Eles utilizam **Testcontainers** (para subir um MongoDB real temporário) e **WireMock (VCR)** para simular respostas da rede em chamadas para APIs externas, atendendo 100% aos requisitos de auditoria. Também incluímos **Testes Parametrizados** com `@ParameterizedTest` para validar múltiplos cenários simultaneamente.
 
 #### 🐳 Solução de Problemas com Docker (Testcontainers) no Windows
 
@@ -142,7 +144,7 @@ frontend-test  (executa em paralelo com os jobs de backend)
 |---|---|
 | `backend-build` | Compila o projeto Spring Boot sem rodar testes |
 | `backend-test` | Executa os testes unitários com MongoDB (mongo:8) |
-| `backend-coverage` | Gera e faz upload do relatório JaCoCo como artefato |
+| `backend-coverage` | Gera o JaCoCo, envia análise pro SonarQube e publica o artefato |
 | `frontend-test` | Instala dependências, faz build e executa os testes Vitest |
 
 ### Baixar o relatório JaCoCo do CI

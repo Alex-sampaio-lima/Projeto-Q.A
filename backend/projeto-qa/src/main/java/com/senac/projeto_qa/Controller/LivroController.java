@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.senac.projeto_qa.Repository.LivroRepository;
 import com.senac.projeto_qa.Repository.UsuarioRepository;
 import com.senac.projeto_qa.Service.LivroService;
+import com.senac.projeto_qa.Service.GoogleBooksService;
 import com.senac.projeto_qa.entities.Livro;
 import com.senac.projeto_qa.entities.Usuario;
 
@@ -37,6 +38,8 @@ public class LivroController {
     private LivroRepository livroRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private GoogleBooksService googleBooksService;
 
     // Método para pegar usuário que tá logado
     private Usuario getUsuarioLogado() {
@@ -81,6 +84,19 @@ public class LivroController {
 
         return ResponseEntity.ok(livroService.findByUsuarioId(usuarioId));
     };
+
+    @GetMapping("/busca-google/{isbn}")
+    public ResponseEntity<Livro> buscarLivroGoogleBooks(@PathVariable String isbn) {
+        // Exige estar logado
+        getUsuarioLogado();
+        
+        Livro livroEncontrado = googleBooksService.buscarPorIsbn(isbn);
+        if (livroEncontrado != null) {
+            return ResponseEntity.ok(livroEncontrado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Livro> createLivro(@Valid @RequestBody Livro livro) {

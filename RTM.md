@@ -6,13 +6,14 @@ Este documento mapeia os Requisitos Funcionais do projeto para os seus respectiv
 
 | ID Req. | Requisito (Descrição) | Testes Associados (Classe / Método) | Cobertura | Tipo de Teste |
 |---------|-----------------------|--------------------------------------|-----------|---------------|
-| **RF01** | Cadastro de Usuário (O sistema deve permitir novos registros, criptografando a senha) | `UsuarioServiceTest.registrar_deveLancarExcecaoSenhasDiferentes` <br> `UsuarioControllerTest.createUsuario` | 100% | Unitário / E2E |
+| **RF01** | Cadastro de Usuário (O sistema deve permitir novos registros, criptografando a senha) | `UsuarioServiceTest.registrar_deveLancarExcecaoSenhasDiferentes` (Parametrizado) <br> `UsuarioControllerTest.createUsuario` | 100% | Unitário / E2E |
 | **RF02** | Login / Autenticação (O sistema deve validar as credenciais e manter o contexto HTTP Basic Auth) | `CustomUserDetailsServiceTest.loadUserByUsername_sucesso` <br> `AuthControllerTest.getCurrentUser_sucesso` <br> `AuthControllerTest.getCurrentUser_inexistente` | 100% | Unitário / E2E |
 | **RF03** | CRUD de Livros: Criação (O sistema deve permitir criar um livro) | `LivroControllerTest.createLivro_deveRetornar201QuandoValido` | 100% | E2E |
 | **RF04** | CRUD de Livros: Leitura (Listagem de todos os livros do sistema) | `LivroServiceTest.findAll_deveRetornarTodosOsLivros` <br> `LivroControllerTest.getAllLivros_deveRetornarListaQuandoAutenticado` | 100% | Unitário / E2E |
 | **RF05** | CRUD de Livros: Meus Livros (Listagem apenas dos livros do usuário logado) | `LivroServiceTest.findByUsuarioId_deveRetornarLivrosDoUsuario` <br> `LivroControllerTest.getMeusLivros_deveRetornarMeusLivros` | 100% | Unitário / E2E |
 | **RF06** | CRUD de Livros: Atualização (Permitir alteração parcial de campos, incluindo Nota e Status) | `LivroServiceTest.updateParcial_deveAtualizarEContextualizarNoBanco` <br> `LivroControllerTest.updateParcial_deveAtualizar` | 100% | Unitário / E2E |
 | **RF07** | CRUD de Livros: Remoção (O sistema deve permitir excluir um livro do banco MongoDB) | `LivroServiceTest.deleteById_deveRemoverDoBanco` <br> `LivroControllerTest.deleteLivro_deveDeletar` | 100% | Unitário / E2E |
+| **RF08** | Integração com API Externa (Google Books) para autocompletar dados do Livro | `GoogleBooksServiceVCRTest.buscarPorIsbn_comWireMock` | 100% | VCR (WireMock) |
 
 ---
 

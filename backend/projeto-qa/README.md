@@ -15,7 +15,9 @@ Esta é a API REST do sistema **Gerenciador de Biblioteca Pessoal**, desenvolvid
 | **Lombok** | — | Redução de boilerplate |
 | **Maven Wrapper** | — | Build e gerenciamento de dependências |
 | **JaCoCo** | 0.8.12 | Análise de cobertura de código |
+| **SonarQube** | — | Qualidade contínua e análise estática (via CI) |
 | **Testcontainers** | 1.19.7 | Testes de integração com MongoDB real |
+| **WireMock** | 3.5.4 | Gravação e simulação de chamadas (VCR) para APIs externas |
 
 ---
 
@@ -54,6 +56,7 @@ A API estará disponível em `http://localhost:8080`.
 | `GET` | `/livros` | Listar todos os livros do usuário |
 | `POST` | `/livros` | Cadastrar novo livro |
 | `GET` | `/livros/{id}` | Buscar livro por ID |
+| `GET` | `/livros/busca-google/{isbn}` | Consultar dados de um livro na API do Google Books |
 | `PUT` | `/livros/{id}` | Atualizar dados de um livro |
 | `DELETE` | `/livros/{id}` | Excluir um livro |
 
@@ -80,7 +83,10 @@ target/site/jacoco/index.html
 O relatório mostra a cobertura por **pacote**, **classe**, **método** e **linha**, com destaque visual (verde/vermelho).
 
 > [!IMPORTANT]
-> O projeto segue uma política de **Zero Mocks**. Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados real durante a execução do MongoDB.
+> O projeto segue uma política de **Zero Mocks de Código** (ex: proibido Mockito). 
+> - Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados real durante a execução.
+> - As chamadas para APIs Externas (Google Books) são testadas utilizando a estratégia **VCR** com o **WireMock**, interceptando e simulando requisições HTTP reais (via Sockets/Rede).
+> - Também utilizamos **Testes Parametrizados** com JUnit5 (`@ParameterizedTest` e `@ValueSource`) para validar múltiplos cenários em uma única execução.
 
 ---
 
