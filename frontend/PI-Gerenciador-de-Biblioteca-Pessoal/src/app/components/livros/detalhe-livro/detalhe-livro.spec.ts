@@ -1,8 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 
 import { DetalheLivroComponent } from './detalhe-livro.component';
+
+@Component({ standalone: true, template: '' })
+class DummyComponent {}
 
 describe('DetalheLivroComponent', () => {
   let component: DetalheLivroComponent;
@@ -11,7 +15,12 @@ describe('DetalheLivroComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DetalheLivroComponent],
-      providers: [provideRouter([]), provideHttpClient()],
+      providers: [
+        provideRouter([
+          { path: 'livros', component: DummyComponent }
+        ]),
+        provideHttpClient()
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DetalheLivroComponent);
