@@ -1,0 +1,26 @@
+{
+  "id" : "339ea3af-1f17-4596-9242-230375964362",
+  "name" : "books_v1_volumes",
+  "request" : {
+    "url" : "/books/v1/volumes?q=isbn:9788576082675",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"kind\": \"books#volumes\",\n  \"totalItems\": 0\n}\n",
+    "headers" : {
+      "Accept-Ranges" : "none",
+      "X-Frame-Options" : "SAMEORIGIN",
+      "Alt-Svc" : "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+      "Server" : "ESF",
+      "X-Content-Type-Options" : "nosniff",
+      "Vary" : [ "X-Origin", "Referer", "Origin,Accept-Encoding" ],
+      "X-XSS-Protection" : "0",
+      "Date" : "Wed, 20 May 2026 03:36:16 GMT",
+      "Content-Type" : "application/json; charset=UTF-8"
+    }
+  },
+  "uuid" : "339ea3af-1f17-4596-9242-230375964362",
+  "persistent" : true,
+  "insertionIndex" : 1
+}
