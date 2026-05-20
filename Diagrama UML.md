@@ -1,10 +1,121 @@
-# 📊 Diagramas UML de Sequência
+# 📊 Diagramas UML do Sistema
 
-Este documento contém os diagramas de sequência que descrevem o fluxo de interação entre os componentes do sistema **Gerenciador de Biblioteca Pessoal**.
+Este documento contém os diagramas de sequência e classes que descrevem a estrutura e o fluxo de interação entre os componentes do sistema **Gerenciador de Biblioteca Pessoal**.
 
 ---
 
-## 1. Fluxo de Autenticação (Login)
+## 1. Diagramas de Classe
+
+### A) Backend (Spring Boot)
+
+Estrutura principal das Entidades e Relacionamentos no Backend.
+
+```mermaid
+classDiagram
+    class Usuario {
+        +String id
+        +String nome
+        +String email
+        +String senha
+        +String confirmarSenha
+    }
+
+    class Livro {
+        +String id
+        +String titulo
+        +String autor
+        +String isbn
+        +int anoPublicacao
+        +String status
+        +int nota
+        +String usuarioId
+    }
+
+    class LivroRepository {
+        <<interface>>
+        +findByUsuarioId(String usuarioId) List~Livro~
+    }
+
+    class UsuarioRepository {
+        <<interface>>
+        +findByEmail(String email) Optional~Usuario~
+    }
+
+    class LivroService {
+        +salvar(Livro livro) Livro
+        +findByUsuarioId(String usuarioId) List~Livro~
+        +buscarPorIsbnGoogleBooks(String isbn) LivroDTO
+    }
+
+    class UsuarioService {
+        +registrar(Usuario usuario) Usuario
+    }
+
+    Usuario "1" --> "*" Livro : Possui
+    LivroService ..> LivroRepository : Usa
+    UsuarioService ..> UsuarioRepository : Usa
+```
+
+### B) Frontend (Angular)
+
+Estrutura principal de Modelos e Serviços no Frontend.
+
+```mermaid
+classDiagram
+    class UsuarioModel {
+        +string id
+        +string nome
+        +string email
+        +string token
+    }
+
+    class LivroModel {
+        +string id
+        +string titulo
+        +string autor
+        +string isbn
+        +number anoPublicacao
+        +string status
+        +number nota
+    }
+
+    class AuthService {
+        +login(email, senha) Observable
+        +registrar(usuario) Observable
+        +logout() void
+        +getUsuarioLogado() UsuarioModel
+    }
+
+    class LivroService {
+        +getLivros() Observable
+        +getLivroById(id) Observable
+        +salvarLivro(livro) Observable
+        +atualizarLivro(id, livro) Observable
+        +deletarLivro(id) Observable
+    }
+
+    class DetalheLivroComponent {
+        -LivroService livroService
+        +LivroModel livro
+        +ngOnInit()
+    }
+    
+    class FormularioLivroComponent {
+        -LivroService livroService
+        +salvar()
+    }
+
+    DetalheLivroComponent ..> LivroService : Consome
+    FormularioLivroComponent ..> LivroService : Consome
+    AuthService ..> UsuarioModel : Retorna
+    LivroService ..> LivroModel : Manipula
+```
+
+---
+
+## 2. Diagramas de Sequência (Fluxos)
+
+### 2.1 Fluxo de Autenticação (Login)
 
 O usuário insere suas credenciais. O frontend envia uma requisição com **Basic Auth** ao backend, que valida via Spring Security e retorna o perfil do usuário.
 
@@ -33,9 +144,7 @@ sequenceDiagram
     end
 ```
 
----
-
-## 2. Fluxo de Cadastro de Usuário (Registro)
+### 2.2 Fluxo de Cadastro de Usuário (Registro)
 
 ```mermaid
 sequenceDiagram
@@ -62,11 +171,9 @@ sequenceDiagram
     end
 ```
 
----
+### 2.3 Fluxo de Cadastro de Livro (com Wiremock/VCR)
 
-## 3. Fluxo de Cadastro de Livro
-
-Descreve como um novo livro é adicionado à coleção pessoal do usuário autenticado.
+Descreve como um novo livro é adicionado à coleção pessoal, e os testes de API integrados.
 
 ```mermaid
 sequenceDiagram
@@ -74,6 +181,7 @@ sequenceDiagram
     participant Front as FormularioLivroComponent (Angular)
     participant Interceptor as AuthInterceptor
     participant Back as Backend (Spring Boot)
+    participant Ext as Google Books API (WireMock)
     participant DB as MongoDB
 
     Usuario->>Front: Preenche formulário (título, autor, ISBN...)
@@ -82,6 +190,11 @@ sequenceDiagram
     Interceptor->>Back: POST /livros (Livro JSON + Auth Header)
 
     Note over Back: Spring Security valida as credenciais
+    
+    opt Consulta ISBN para autocompletar
+        Back->>Ext: GET /volumes?q=isbn:{isbn}
+        Ext-->>Back: Retorna dados do Livro JSON (Mockado no Teste)
+    end
 
     Back->>Back: Associa livro ao usuário autenticado (getUsuarioLogado)
     Back->>DB: Salva documento do livro
@@ -91,9 +204,7 @@ sequenceDiagram
     Front->>Usuario: Atualiza lista e exibe mensagem de sucesso
 ```
 
----
-
-## 4. Fluxo de Listagem de Livros
+### 2.4 Fluxo de Listagem de Livros
 
 Descreve a recuperação segura dos livros do usuário autenticado.
 
@@ -118,9 +229,7 @@ sequenceDiagram
     Front->>Usuario: Renderiza lista na tela
 ```
 
----
-
-## 5. Fluxo do Pipeline de CI/CD
+### 2.5 Fluxo do Pipeline de CI/CD
 
 Descreve a sequência de execução automática do GitHub Actions a cada push.
 
@@ -135,76 +244,21 @@ sequenceDiagram
 
     Dev->>GH: git push
     GH->>Build: Inicia (compile sem testes)
-    GH->>Front: Inicia em paralelo
+    GH->>Front: Inicia em paralelo (Testes Vitest)
 
     Build-->>GH: ✅ Build OK
     GH->>Test: Inicia (needs: backend-build)
 
-    Test-->>GH: ✅ Testes OK
+    Test-->>GH: ✅ Testes E2E (Testcontainers) e Unitários OK
     GH->>Cov: Inicia (needs: backend-test)
 
     Cov->>Cov: ./mvnw clean verify
-    Cov->>GH: Upload jacoco-report (artefato)
-    Cov->>GH: Upload surefire-reports (artefato)
-    Cov->>GH: Upload app-jar (artefato)
+    Cov->>GH: Upload jacoco-report e sonar-cloud
     Cov-->>GH: ✅ Coverage OK
 
-    Front-->>GH: ✅ 10/10 testes passando
+    Front-->>GH: ✅ Testes de Componente passando (happy-dom)
 ```
 
 ---
 
-## 6. Diagramas de Sequência de Teste Unitário (Modelo de Teste de Fluxo)
-
-Esta seção apresenta o modelo de testes unitários sem mocks sob a perspectiva de diagramas de sequência.
-
-### A) Modelo Padrão do Professor (Cenário de Referência)
-
-Este diagrama representa a estrutura exata fornecida no modelo de referência (Calculadora/Validador/Repositório):
-
-```mermaid
-sequenceDiagram
-    participant Teste as Teste Unitário
-    participant Calc as Calculadora
-    participant Valid as Validador
-    participant Repo as Repositório
-
-    Teste->>Calc: somar(a, b)
-    Calc->>Valid: validarEntradas(a, b)
-    Valid-->>Calc: true
-    Calc->>Calc: executarSoma(a, b)
-    Calc->>Repo: registrarOperacao()
-    Repo-->>Calc: OK
-    Calc-->>Teste: resultado: int
-```
-
-### B) Modelo Aplicado ao Nosso Projeto (Cenário Real: Cadastro de Usuário)
-
-Este diagrama demonstra a aplicação prática e literal do modelo do professor no nosso projeto real de Q.A, mapeando a classe de teste exercitando as regras de negócio sem mocks e utilizando exatamente as assinaturas de métodos presentes em `UsuarioService` e `UsuarioServiceTest`:
-
-```mermaid
-sequenceDiagram
-    participant Teste as Teste Unitário (UsuarioServiceTest)
-    participant Service as UsuarioService (Serviço)
-    participant Encoder as PasswordEncoder (Validador/Helper)
-    participant Repo as UsuarioRepository (Repositório MongoDB)
-
-    Teste->>Service: registrar(usuario)
-    
-    Service->>Repo: findByEmail(usuario.getEmail())
-    Repo-->>Service: Optional.empty()
-    
-    Note over Service: Valida se usuario.getSenha().equals(usuario.getConfirmarSenha())
-    
-    Service->>Encoder: encode(usuario.getSenha())
-    Encoder-->>Service: senhaCriptografada: String
-    
-    Service->>Repo: save(usuario)
-    Repo-->>Service: salvo: Usuario (com ID gerado)
-    
-    Service-->>Teste: salvo: Usuario
-```
-
----
-
-*Documentação gerada como parte do processo de modelagem de sistema — Projeto Q.A, Senac 2026.*
+*Documentação atualizada como parte do processo de modelagem de sistema — Projeto Q.A, Senac 2026.*

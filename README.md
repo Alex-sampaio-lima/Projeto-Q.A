@@ -27,7 +27,7 @@ Este projeto é um sistema completo para o gerenciamento de uma biblioteca pesso
 ### Frontend
 - **Angular 21**: Framework para a interface do usuário.
 - **RxJS**: Programação reativa.
-- **Vitest 4**: Framework de testes unitários.
+- **Vitest 4**: Framework de testes unitários de alta performance.
 - **happy-dom**: Ambiente DOM leve para execução dos testes.
 - **Prettier**: Padronização de código.
 
@@ -35,7 +35,7 @@ Este projeto é um sistema completo para o gerenciamento de uma biblioteca pesso
 - **MongoDB**: Banco de dados orientado a documentos.
 
 ### CI/CD
-- **GitHub Actions**: Pipeline de integração contínua com 4 jobs independentes.
+- **GitHub Actions**: Pipeline de integração contínua com 4 jobs independentes validando Frontend e Backend em paralelo.
 
 ---
 
@@ -72,13 +72,15 @@ O frontend estará disponível em `http://localhost:4200`.
 
 ## ✨ Funcionalidades Principais
 
-- **Autenticação**: Registro e login de usuários com segurança.
-- **Catálogo de Livros**: Cadastro completo de livros (ISBN, Título, Autor, Ano, etc).
-- **Gestão de Acervo**: Visualização, edição e exclusão de livros da coleção pessoal.
+- **Autenticação**: Registro e login de usuários com segurança e criptografia de senhas.
+- **Catálogo de Livros**: Cadastro completo de livros (ISBN, Título, Autor, Ano, etc) integrado com API externa do Google Books.
+- **Gestão de Acervo**: Visualização, edição, verificação de detalhes e exclusão de livros da coleção pessoal.
 
 ---
 
-## 🧪 Testes
+## 🧪 Testes e Qualidade
+
+O projeto foca fortemente na qualidade do software, implementando testes nos diferentes níveis.
 
 ### Backend
 
@@ -101,7 +103,7 @@ backend/projeto-qa/target/site/jacoco/index.html
 Abra este arquivo no navegador para visualizar a cobertura linha a linha.
 
 > [!NOTE]
-> Os testes de backend não utilizam **Mocks de Código** (como Mockito). Eles utilizam **Testcontainers** (para subir um MongoDB real temporário) e **WireMock (VCR)** para simular respostas da rede em chamadas para APIs externas, atendendo 100% aos requisitos de auditoria. Também incluímos **Testes Parametrizados** com `@ParameterizedTest` para validar múltiplos cenários simultaneamente.
+> Os testes de backend não utilizam **Mocks de Banco de Dados**. Eles utilizam **Testcontainers** (para subir um MongoDB real temporário) garantindo a auditoria completa. Além disso, utilizamos **WireMock (VCR)** para simular chamadas HTTP para o Google Books e **Testes Parametrizados** com `@ParameterizedTest` para varrer cenários robustos no cadastro de usuários.
 
 #### 🐳 Solução de Problemas com Docker (Testcontainers) no Windows
 
@@ -121,13 +123,13 @@ Se você encontrar o erro `Could not find a valid Docker environment` ou `BadReq
 
 ### Frontend
 
+O frontend utiliza testes unitários construídos com **Vitest** e **happy-dom**, testando componentes vitais como o *DetalheLivroComponent*.
+
 **Rodar os testes com Vitest:**
 ```bash
 cd frontend/PI-Gerenciador-de-Biblioteca-Pessoal
 npm test
 ```
-
-Os testes utilizam `happy-dom` como ambiente DOM e são configurados via `vitest.config.ts`.
 
 ---
 
@@ -143,7 +145,7 @@ frontend-test  (executa em paralelo com os jobs de backend)
 | Job | Descrição |
 |---|---|
 | `backend-build` | Compila o projeto Spring Boot sem rodar testes |
-| `backend-test` | Executa os testes unitários com MongoDB (mongo:8) |
+| `backend-test` | Executa os testes unitários e E2E com MongoDB (Testcontainers) |
 | `backend-coverage` | Gera o JaCoCo, envia análise pro SonarQube e publica o artefato |
 | `frontend-test` | Instala dependências, faz build e executa os testes Vitest |
 
@@ -167,16 +169,16 @@ Projeto-Q.A/
 │   └── projeto-qa/             # API Spring Boot
 │       ├── src/
 │       │   ├── main/           # Código fonte Java
-│       │   └── test/           # Testes unitários e de integração
+│       │   └── test/           # Testes unitários, e2e (Testcontainers) e wiremock
 │       └── pom.xml             # Dependências e configuração do JaCoCo
 ├── frontend/
 │   └── PI-Gerenciador-de-Biblioteca-Pessoal/  # Interface Angular
 │       ├── src/
-│       │   └── app/            # Componentes, serviços e testes (.spec.ts)
+│       │   └── app/            # Componentes (ex: DetalheLivro), serviços e testes (.spec.ts)
 │       ├── vitest.config.ts    # Configuração do Vitest
-│       └── angular.json        # Configuração do Angular CLI
+│       └── package.json        # Dependências NPM
 ├── RTM.md                      # Matriz de Rastreabilidade de Requisitos
-├── Diagrama UML.md             # Diagramas UML (Sequência)
+├── Diagrama UML.md             # Diagramas UML (Classe e Sequência)
 └── README.md                   # Documentação principal
 ```
 
@@ -186,7 +188,7 @@ Projeto-Q.A/
 - **Alexsander Sampaio Lima**
 - **Ana Julia Ferreira Lima**
 - **Sthephany Viana da Silva**
-- **Thalita**
+- **Thalyta Cristina Santana Silva**
 
 ---
 *Este projeto foi desenvolvido com foco em práticas de Qualidade de Software (Q.A).*

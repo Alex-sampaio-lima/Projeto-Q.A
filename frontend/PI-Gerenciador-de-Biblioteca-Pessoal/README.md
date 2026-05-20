@@ -8,12 +8,12 @@ Este é o cliente web do sistema **Gerenciador de Biblioteca Pessoal**, desenvol
 
 | Tecnologia | Versão | Finalidade |
 |---|---|---|
-| **Angular** | 21 | Framework principal |
-| **TypeScript** | ~5.9 | Linguagem de programação |
-| **RxJS** | ~7.8 | Programação reativa / HTTP |
-| **Vitest** | ^4 | Framework de testes unitários |
-| **happy-dom** | ^17 | Ambiente DOM para os testes |
-| **Prettier** | ^3 | Padronização de código |
+| **Angular** | 21.2 | Framework principal |
+| **TypeScript** | ~5.9.2 | Linguagem de programação |
+| **RxJS** | ~7.8.0 | Programação reativa / HTTP |
+| **Vitest** | ^4.0.8 | Framework de testes unitários |
+| **happy-dom** | ^20.9.0 | Ambiente DOM para os testes |
+| **Prettier** | ^3.8.1 | Padronização de código |
 
 ---
 
@@ -43,7 +43,7 @@ A interface estará disponível em `http://localhost:4200`.
 
 ## 🧪 Testes
 
-O projeto utiliza **Vitest 4** com ambiente **happy-dom** (configurado em `vitest.config.ts`). Seguimos uma política de testes que prioriza a integração real com o backend e banco de dados, sem o uso de Mocks no sistema completo.
+O projeto utiliza **Vitest 4** com ambiente **happy-dom** (configurado em `vitest.config.ts`). Seguimos uma política de testes unitários de alta performance e independentes focando no DOM e no comportamento interativo dos componentes essenciais. Toda a suíte corre de forma integrada no nosso pipeline de CI com o GitHub Actions.
 
 **Executar todos os testes (modo CI — sem watch):**
 ```bash
@@ -89,10 +89,10 @@ src/
 │   ├── components/
 │   │   ├── autenticacao/       # Login e Registro
 │   │   ├── compartilhado/      # Navbar e Rodapé
-│   │   └── livros/             # CRUD de livros
-│   ├── interceptors/           # Interceptors HTTP (autenticação)
-│   ├── models/                 # Interfaces TypeScript
-│   ├── services/               # LivroService, AuthService
+│   │   └── livros/             # CRUD e Detalhes de livros
+│   ├── interceptors/           # Interceptors HTTP (autenticação Basic Auth)
+│   ├── models/                 # Interfaces TypeScript (Livro, Usuario)
+│   ├── services/               # Serviços (LivroService, AuthService)
 │   ├── app.ts                  # Componente raiz
 │   ├── app.routes.ts           # Definição de rotas
 │   └── app.config.ts           # Configuração da aplicação
@@ -100,6 +100,7 @@ src/
 └── main.ts
 vitest.config.ts                # Configuração do Vitest (happy-dom, threads)
 angular.json                    # Configuração do Angular CLI
+package.json                    # Dependências e NPM scripts
 ```
 
 ---

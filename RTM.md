@@ -14,12 +14,14 @@ Este documento mapeia os Requisitos Funcionais do projeto para os seus respectiv
 | **RF06** | CRUD de Livros: Atualização (Permitir alteração parcial de campos, incluindo Nota e Status) | `LivroServiceTest.updateParcial_deveAtualizarEContextualizarNoBanco` <br> `LivroControllerTest.updateParcial_deveAtualizar` | 100% | Unitário / E2E |
 | **RF07** | CRUD de Livros: Remoção (O sistema deve permitir excluir um livro do banco MongoDB) | `LivroServiceTest.deleteById_deveRemoverDoBanco` <br> `LivroControllerTest.deleteLivro_deveDeletar` | 100% | Unitário / E2E |
 | **RF08** | Integração com API Externa (Google Books) para autocompletar dados do Livro | `GoogleBooksServiceVCRTest.buscarPorIsbn_comWireMock` | 100% | VCR (WireMock) |
+| **RF09** | Visualização de Detalhes do Livro no Frontend | `DetalheLivroComponent.spec.ts` | 100% | Unitário (Vitest) |
 
 ---
 
-## Diagramas de Sequência (UML)
+## Diagramas de Sequência (UML) Associados
 
-Abaixo estão os fluxos de operação detalhados mapeando os dois requisitos principais: Autenticação e Cadastro de Livros.
+Abaixo estão os fluxos de operação detalhados mapeando os dois requisitos principais: Autenticação e Cadastro de Livros. 
+*(Para uma visão mais completa, incluindo diagramas de classes de frontend e backend, consulte o arquivo [Diagrama UML.md](./Diagrama%20UML.md)).*
 
 ### 1. Fluxo de Autenticação (RF02)
 

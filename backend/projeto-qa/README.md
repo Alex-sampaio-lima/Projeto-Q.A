@@ -1,6 +1,6 @@
 # ⚙️ Backend — Gerenciador de Biblioteca Pessoal
 
-Esta é a API REST do sistema **Gerenciador de Biblioteca Pessoal**, desenvolvida com Java 21 e Spring Boot 4.
+Esta é a API REST do sistema **Gerenciador de Biblioteca Pessoal**, desenvolvida com Java 21 e Spring Boot 4.0.5.
 
 ---
 
@@ -16,7 +16,7 @@ Esta é a API REST do sistema **Gerenciador de Biblioteca Pessoal**, desenvolvid
 | **Maven Wrapper** | — | Build e gerenciamento de dependências |
 | **JaCoCo** | 0.8.12 | Análise de cobertura de código |
 | **SonarQube** | — | Qualidade contínua e análise estática (via CI) |
-| **Testcontainers** | 1.19.7 | Testes de integração com MongoDB real |
+| **Testcontainers** | 1.20.4 | Testes de integração com MongoDB real |
 | **WireMock** | 3.5.4 | Gravação e simulação de chamadas (VCR) para APIs externas |
 
 ---
@@ -62,7 +62,9 @@ A API estará disponível em `http://localhost:8080`.
 
 ---
 
-## 🧪 Testes
+## 🧪 Testes e Qualidade
+
+O backend utiliza uma arquitetura robusta de testes integrados e de unidade, validada automaticamente via **GitHub Actions**.
 
 ### Executar apenas os testes:
 ```bash
@@ -80,13 +82,23 @@ Após rodar `./mvnw clean verify`, abra o arquivo gerado no navegador:
 target/site/jacoco/index.html
 ```
 
-O relatório mostra a cobertura por **pacote**, **classe**, **método** e **linha**, com destaque visual (verde/vermelho).
-
 > [!IMPORTANT]
-> O projeto segue uma política de **Zero Mocks de Código** (ex: proibido Mockito). 
-> - Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados real durante a execução.
-> - As chamadas para APIs Externas (Google Books) são testadas utilizando a estratégia **VCR** com o **WireMock**, interceptando e simulando requisições HTTP reais (via Sockets/Rede).
-> - Também utilizamos **Testes Parametrizados** com JUnit5 (`@ParameterizedTest` e `@ValueSource`) para validar múltiplos cenários em uma única execução.
+> O projeto segue uma política estrita nos testes:
+> - **Zero Mocks de Banco de Dados**: Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados MongoDB real durante a execução.
+> - **WireMock (VCR)**: As chamadas para APIs Externas (Google Books) são testadas interceptando e simulando requisições HTTP reais (via Sockets/Rede).
+> - **Testes Parametrizados**: Usamos JUnit5 (`@ParameterizedTest` e `@ValueSource`) para testar o cadastro de usuários de forma robusta e exaustiva.
+> - **Integração Completa HTTP**: A camada Web (Controllers) não utiliza `MockMvc`, mas sim chamadas HTTP reais disparadas para portas aleatórias do Spring Boot via `RestTemplate`.
+
+### Cobertura (Requisitos Funcionais)
+
+Alcançamos a cobertura total estipulada pela Matriz de Rastreabilidade (RTM):
+
+| Camada / Componente | Teste | Cobertura | Observação |
+|---|---|---|---|
+| `UsuarioController` / `AuthController` | E2E + Unitário | 100% | Autenticação e Cadastro (com Testcontainers) |
+| `LivroController` | E2E + Unitário | 100% | CRUD completo com chamadas HTTP reais |
+| `GoogleBooksService` | Integração (VCR) | 100% | WireMock respondendo JSON mockado em porta local |
+| `Service Layer` | Caixa Branca | 100% | Coberto pelos fluxos de integração reais |
 
 ---
 
@@ -117,17 +129,6 @@ Versões modernas do Docker Desktop exigem versões de API mais recentes que as 
 
 ---
 
-### Cobertura atual (Instruções):
-
-| Pacote | Cobertura | Observação |
-|---|---|---|
-| `config` | ~100% | Totalmente coberto |
-| `Service` | **~53%** | Coberto por testes de Caixa Branca |
-| `Controller` | **~4%** | Coberto por testes de Caixa Preta |
-| **Total** | **~35%** | Foco em integração real |
-
----
-
 ## 🏗️ Estrutura de Pastas
 
 ```
@@ -135,16 +136,17 @@ src/
 ├── main/
 │   ├── java/com/senac/projeto_qa/
 │   │   ├── config/         # Configurações (Security, CORS)
-│   │   ├── Controller/     # Controladores REST
-│   │   ├── Service/        # Regras de negócio
-│   │   ├── entitles/       # Entidades / Modelos
+│   │   ├── Controller/     # Controladores REST (Auth, Livro, Usuario)
+│   │   ├── Service/        # Regras de negócio (GoogleBooks, CustomUserDetails, Livro)
+│   │   ├── entities/       # Entidades / Modelos (Livro, Usuario)
+│   │   ├── Repository/     # Repositórios (LivroRepository, UsuarioRepository)
 │   │   └── ProjetoQaApplication.java
 │   └── resources/
 │       └── application.properties  # Configuração do MongoDB
 └── test/
     └── java/com/senac/projeto_qa/
         └── ProjetoQaApplicationTests.java
-pom.xml                     # Dependências + configuração do JaCoCo
+pom.xml                     # Dependências + configuração do JaCoCo e Testcontainers
 ```
 
 ---
