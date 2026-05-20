@@ -193,7 +193,7 @@ sequenceDiagram
     
     opt Consulta ISBN para autocompletar
         Back->>Ext: GET /volumes?q=isbn:{isbn}
-        Ext-->>Back: Retorna dados do Livro JSON (Mockado no Teste)
+        Ext-->>Back: Reproduz dados reais gravados (Cassette JSON do VCR)
     end
 
     Back->>Back: Associa livro ao usuário autenticado (getUsuarioLogado)

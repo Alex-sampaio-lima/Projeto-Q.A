@@ -17,7 +17,7 @@ Esta é a API REST do sistema **Gerenciador de Biblioteca Pessoal**, desenvolvid
 | **JaCoCo** | 0.8.12 | Análise de cobertura de código |
 | **SonarQube** | — | Qualidade contínua e análise estática (via CI) |
 | **Testcontainers** | 1.20.4 | Testes de integração com MongoDB real |
-| **WireMock** | 3.5.4 | Gravação e simulação de chamadas (VCR) para APIs externas |
+| **WireMock** | 3.5.4 | Gravação e reprodução de chamadas HTTP reais em JSON (VCR) |
 
 ---
 
@@ -85,7 +85,7 @@ target/site/jacoco/index.html
 > [!IMPORTANT]
 > O projeto segue uma política estrita nos testes:
 > - **Zero Mocks de Banco de Dados**: Todos os testes de backend utilizam **Testcontainers** para validar a persistência em um banco de dados MongoDB real durante a execução.
-> - **WireMock (VCR)**: As chamadas para APIs Externas (Google Books) são testadas interceptando e simulando requisições HTTP reais (via Sockets/Rede).
+> - **WireMock (VCR)**: As chamadas para APIs Externas (Google Books) são testadas usando o padrão VCR, gravando as respostas da API real em arquivos JSON (cassettes) e reproduzindo-as localmente, abolindo o uso de mocks no código Java.
 > - **Testes Parametrizados**: Usamos JUnit5 (`@ParameterizedTest` e `@ValueSource`) para testar o cadastro de usuários de forma robusta e exaustiva.
 > - **Integração Completa HTTP**: A camada Web (Controllers) não utiliza `MockMvc`, mas sim chamadas HTTP reais disparadas para portas aleatórias do Spring Boot via `RestTemplate`.
 
@@ -97,7 +97,7 @@ Alcançamos a cobertura total estipulada pela Matriz de Rastreabilidade (RTM):
 |---|---|---|---|
 | `UsuarioController` / `AuthController` | E2E + Unitário | 100% | Autenticação e Cadastro (com Testcontainers) |
 | `LivroController` | E2E + Unitário | 100% | CRUD completo com chamadas HTTP reais |
-| `GoogleBooksService` | Integração (VCR) | 100% | WireMock respondendo JSON mockado em porta local |
+| `GoogleBooksService` | Integração (VCR) | 100% | WireMock reproduzindo arquivo JSON real gravado (cassette) em porta local |
 | `Service Layer` | Caixa Branca | 100% | Coberto pelos fluxos de integração reais |
 
 ---

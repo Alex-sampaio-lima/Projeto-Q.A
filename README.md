@@ -22,7 +22,7 @@ Este projeto é um sistema completo para o gerenciamento de uma biblioteca pesso
 - **Maven**: Gerenciador de dependências e build.
 - **JaCoCo 0.8.12**: Ferramenta de análise de cobertura de código.
 - **Testcontainers**: Para testes de integração com MongoDB real.
-- **WireMock (VCR)**: Utilizado para mockar e gravar chamadas HTTP da API do Google Books.
+- **WireMock (VCR)**: Utilizado para gravar e reproduzir respostas reais (cassettes) da API do Google Books, abolindo mocks de código.
 
 ### Frontend
 - **Angular 21**: Framework para a interface do usuário.
@@ -103,7 +103,7 @@ backend/projeto-qa/target/site/jacoco/index.html
 Abra este arquivo no navegador para visualizar a cobertura linha a linha.
 
 > [!NOTE]
-> Os testes de backend não utilizam **Mocks de Banco de Dados**. Eles utilizam **Testcontainers** (para subir um MongoDB real temporário) garantindo a auditoria completa. Além disso, utilizamos **WireMock (VCR)** para simular chamadas HTTP para o Google Books e **Testes Parametrizados** com `@ParameterizedTest` para varrer cenários robustos no cadastro de usuários.
+> Os testes de backend não utilizam **Mocks de Banco de Dados**. Eles utilizam **Testcontainers** (para subir um MongoDB real temporário) garantindo a auditoria completa. Além disso, utilizamos **WireMock (VCR)** com arquivos JSON reais gravados (cassettes) para chamadas HTTP do Google Books e **Testes Parametrizados** com `@ParameterizedTest` para varrer cenários robustos no cadastro de usuários.
 
 #### 🐳 Solução de Problemas com Docker (Testcontainers) no Windows
 
